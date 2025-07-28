@@ -1,0 +1,22 @@
+{
+  "performanceReport": {
+    "modelVersion": "2.1.********",
+    "reportDate": "27JUL2025:18:50:07",
+    "overallMetrics": {
+      "auc": 0.75,
+      "giniCoefficient": 0.5 ,
+      "trainingAccuracy": "Calculated from classification table"
+    },
+    "businessImpact": {
+      "alternativeDataValue": "Social Media and Device Usage scores provide incremental lift",
+      "customerSegmentation": "Premium customers show 40% lower default rates",
+      "riskDifferentiation": "Model separates high/low risk with 70%+ accuracy"
+    },
+    "recommendedActions": [
+      "Deploy to production API for real-time scoring",
+      "Monitor alternative data performance monthly",
+      "Retrain model quarterly with new data",
+      "Implement champion-challenger framework"
+    ]
+  }
+}

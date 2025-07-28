@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  sas-credit-api:
+    # This tells Docker to build an image from the Dockerfile in the current directory (.)
+    build: .
+    
+    # This maps port 8080 on your Mac to port 8080 inside the container
+    ports:
+      - "8080:8080"
+      
+    # This is the most important part for local testing:
+    # It mounts your local 'model_artifact' folder into the container as a read-only volume.
+    # This allows the API inside the container to see the real SAS JSON files on your Mac.
+    volumes:
+      - ./model_artifact:/app/model_artifact
+      - ./src:/app/src
+      
+    # Sets environment variables inside the container
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+      
+    # Ensures the container restarts automatically unless you stop it
+    restart: unless-stopped

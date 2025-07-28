@@ -1,0 +1,28 @@
+{
+  "modelMetadata": {
+    "modelName": "EnterpriseCreditRisk",
+    "version": "2.1",
+    "modelType": "Logistic Regression with Alternative Data",
+    "description": "Advanced credit risk model using traditional and alternative data sources",
+    "buildDate": "27JUL2025:18:50:07",
+    "trainingRecords": 7000,
+    "validationRecords": 3000,
+    "auc": 0.75
+  },
+  "coefficients": {
+    "Intercept": -1.9303,
+    "HasInvestmentAccount": -0.8383,
+    "CreditScore": -0.00668,
+    "DebtToIncome": 3.2583,
+    "EmploymentYears": -0.1054,
+    "Age": -0.0185,
+    "SocialMediaRiskScore": 0.4250,
+    "DeviceUsageScore": -0.00606,
+    "NumberOfProducts": 0.2198,
+    "AccountTenure": -0.0534,
+    "LatePayments": 0.3818,
+    "OverdraftEvents": 0.2071,
+    "Income_Credit_Ratio": -0.6131,
+    "AgeRisk": 0.3419
+  }
+}

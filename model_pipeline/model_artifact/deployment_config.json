@@ -1,0 +1,26 @@
+{
+  "model_name": "EnterpriseCreditRisk_APAC",
+  "model_version": "2.1.20250728",
+  "deployment_target": "Production_Canary",
+  "status": "Active",
+  "line_of_business": "Retail Banking",
+  "region": "APAC",
+  "created_by": "SAS Automated Modeler",
+  "validated_by": "MLOps Quality Gate",
+  "timestamp_utc": "2025-07-28T00:20:00Z",
+  "input_schema": {
+    "Income": {"type": "float", "min": 0, "max": 1000000},
+    "Age": {"type": "integer", "min": 18, "max": 80},
+    "LoanAmount": {"type": "float", "min": 0, "max": 2000000},
+    "CreditScore": {"type": "integer", "min": 300, "max": 850},
+    "DebtToIncome": {"type": "float", "min": 0, "max": 1},
+    "EmploymentYears": {"type": "integer", "min": 0, "max": 50},
+    "LoanTerm": {"type": "integer", "min": 5, "max": 50},
+    "SocialMediaRiskScore": {"type": "float", "min": 0, "max": 1},
+    "DeviceUsageScore": {"type": "float", "min": 0, "max": 1}
+  },
+  "monitoring_rules": {
+    "drift_threshold": 0.05,
+    "performance_threshold_auc": 0.70
+  }
+}
