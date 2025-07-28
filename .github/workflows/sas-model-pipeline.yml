@@ -1,0 +1,71 @@
+name: 🚀 SAS Model to Production Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'model_pipeline/model_artifact/**'
+      - 'model_pipeline/src/**'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  validate-and-build:
+    name: 🏗️ Validate, Build & Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 📝 Validate SAS Model Artifacts
+        id: validation
+        run: |
+          echo "🔍 Validating SAS model artifacts..."
+          cd model_pipeline/model_artifact
+          if jq empty "model_coefficients.json" && jq empty "deployment_config.json"; then
+            echo "✅ All SAS model artifacts are valid JSON."
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Invalid JSON found in model artifacts."
+            echo "ready=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: 🔐 Log in to the Container registry
+        if: steps.validation.outputs.ready == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🛠️ Build and push Docker image
+        if: steps.validation.outputs.ready == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./model_pipeline
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    name: 🚀 Deploy to Production (Simulated)
+    runs-on: ubuntu-latest
+    needs: validate-and-build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 🚀 Simulate Deployment
+        run: |
+          echo "🚀 Deploying SAS Credit Risk API..."
+          echo "  Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          echo "  Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "  Environment: Production"
+          echo "✅ SAS model successfully 'deployed' to production!"
