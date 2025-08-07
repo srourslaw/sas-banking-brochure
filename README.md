@@ -1,57 +1,62 @@
- Step 1: Start the API Server
+# SAS Banking Intelligence - Technical Documentation
 
-  cd /Users/husseinsrour/Downloads/sas-model-pipeline/model_pipeline
-  docker-compose up -d
+## 🏦 Complete SAS Banking Intelligence Pipeline
 
-  Step 2: Verify API is Running
+This repository contains the complete SAS Banking Intelligence system with technical documentation, mobile demos, and architectural brochures for SAS banking events.
 
-  # Check if container is running
-  docker-compose ps
+## 📋 Quick Start
 
-  # Test the health endpoint
-  curl http://localhost:8080/health
+### Step 1: Start the API Server
 
-  Step 3: Access the Demo Correctly
+```bash
+cd model_pipeline
+docker-compose up -d
+```
 
-  Don't double-click the HTML file! Instead:
+### Step 2: Verify API is Running
 
-  Open in browser: http://localhost:8080
+```bash
+# Check if container is running
+docker-compose ps
 
-  This serves the demo through the API server, not as a static file.
+# Test the health endpoint
+curl http://localhost:8080/health
+```
 
-  Step 4: Test the Mobile Form
+### Step 3: Access the Demo
 
-  1. Click "Start Demo" - You should see the 40-second countdown
-  2. Scan the QR code or click the QR code to access mobile interface
-  3. Fill out the form with different values
-  4. Submit - Now you should get different results based on your inputs
+- **Desktop Demo**: http://localhost:8080
+- **Technical Brochure**: https://srourslaw.github.io/sas-banking-brochure/technical_brochure.html
+- **Mobile Interface**: Scan QR code from desktop demo
 
-  Step 5: Test Different Scenarios
+## 🎯 Key Features
 
-  Try these to verify it's working:
+- **40-Second Model-to-Market Pipeline**: Complete SAS model deployment demonstration
+- **Dynamic Risk Assessment**: Real-time banking risk calculations with realistic coefficients
+- **Mobile-First Interface**: Responsive banking demo with QR code access
+- **Technical Architecture Brochure**: Comprehensive SAS development documentation
+- **Banking Analytics Dashboard**: Interactive visualizations and portfolio metrics
+- **Business Assessment Tool**: Microsoft-style ISV AI evaluation framework
 
-  Low Risk Customer:
-  - Income: $120,000
-  - Credit Score: 780
-  - Debt Ratio: 20%
-  - Age: 35
-  - Employment: 10 years
+## 🧪 Testing Scenarios
 
-  High Risk Customer:
-  - Income: $35,000
-  - Credit Score: 580
-  - Debt Ratio: 60%
-  - Age: 22
-  - Employment: 1 year
+**Low Risk Customer:**
+- Income: $120,000
+- Credit Score: 780  
+- Debt Ratio: 20%
+- Age: 35
+- Employment: 10 years
 
-  You should see dramatically different risk probabilities and interest rates.
+**High Risk Customer:**
+- Income: $35,000
+- Credit Score: 580
+- Debt Ratio: 60% 
+- Age: 22
+- Employment: 1 year
 
-  If the API Won't Start:
+## 🏢 Thakral One Team
 
-  # Stop and restart
-  docker-compose down
-  docker-compose up --build -d
-
-  The key difference: http://localhost:8080 (API server) vs file:// (static file) - only the API server can provide dynamic, calculated results!
-
-⏺ Update Todos
+- **Hussein Srour** - Vice President, Data & AI Consulting
+- **Bikram Thakral** - Chief Executive Officer  
+- **Santie Heydenrych** - Deputy Chief Executive Officer
+- **Annabelle Codrington** - VP, Business Development (Australia)
