@@ -1,0 +1,21 @@
+INFO:__main__:✅ SAS model 'EnterpriseCreditRisk_APAC' loaded successfully.
+/Users/husseinsrour/Library/Python/3.9/lib/python/site-packages/pydantic/_internal/_fields.py:149: UserWarning: Field "model_version" has conflict with protected namespace "model_".
+
+You may be able to resolve this warning by setting `model_config['protected_namespaces'] = ()`.
+  warnings.warn(
+/Users/husseinsrour/Library/Python/3.9/lib/python/site-packages/pydantic/_internal/_fields.py:149: UserWarning: Field "model_name" has conflict with protected namespace "model_".
+
+You may be able to resolve this warning by setting `model_config['protected_namespaces'] = ()`.
+  warnings.warn(
+INFO:__main__:🚀 Starting SAS Banking Intelligence API...
+INFO:__main__:📊 Model loaded: EnterpriseCreditRisk_APAC
+INFO:__main__:🔗 API Documentation: http://localhost:8080/docs
+INFO:     Started server process [82405]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50771 - "GET /health HTTP/1.1" 200 OK
+/Users/husseinsrour/Downloads/sas-model-pipeline/model_pipeline/src/app.py:436: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.5/migration/
+  features = request.dict()
+INFO:     127.0.0.1:50800 - "POST /assess/comprehensive HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50831 - "OPTIONS /assess/comprehensive HTTP/1.1" 200 OK

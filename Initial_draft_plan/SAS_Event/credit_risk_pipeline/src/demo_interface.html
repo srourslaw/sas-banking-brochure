@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakral One - Credit Risk Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .demo-badge {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: inline-block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result.low-risk {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .result.high-risk {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .result-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .result-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .result-details {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .quick-test {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .quick-btn {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-block;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Thakral One</div>
+            <div class="subtitle">Credit Risk Assessment</div>
+            <span class="demo-badge">LIVE DEMO</span>
+        </div>
+        
+        <form id="creditForm">
+            <div class="form-group">
+                <label for="income">Annual Income ($)</label>
+                <input type="number" id="income" placeholder="75000" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" placeholder="35" min="18" max="80" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="loanAmount">Loan Amount ($)</label>
+                <input type="number" id="loanAmount" placeholder="200000" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="creditScore">Credit Score (300-850)</label>
+                <input type="number" id="creditScore" placeholder="750" min="300" max="850" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="debtToIncome">Debt-to-Income Ratio (0.0-1.0)</label>
+                <input type="number" id="debtToIncome" placeholder="0.25" step="0.01" min="0" max="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="employmentYears">Employment Years</label>
+                <input type="number" id="employmentYears" placeholder="8" min="0" max="50" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="loanTerm">Loan Term (Years)</label>
+                <input type="number" id="loanTerm" placeholder="30" required>
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">
+                🎯 Get Credit Risk Assessment
+            </button>
+        </form>
+        
+        <div class="quick-test">
+            <p style="font-size: 14px; color: #666; margin-bottom: 10px;">Quick Test:</p>
+            <span class="quick-btn" onclick="fillLowRisk()">👍 Low Risk Customer</span>
+            <span class="quick-btn" onclick="fillHighRisk()">⚠️ High Risk Customer</span>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing risk...</p>
+        </div>
+        
+        <div class="result" id="result">
+            <div class="result-icon" id="resultIcon"></div>
+            <div class="result-text" id="resultText"></div>
+            <div class="result-details" id="resultDetails"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Get API base URL from current location
+        const API_BASE = window.location.origin;
+        
+        document.getElementById('creditForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            
+            // Collect form data
+            const formData = {
+                Income: parseFloat(document.getElementById('income').value),
+                Age: parseInt(document.getElementById('age').value),
+                LoanAmount: parseFloat(document.getElementById('loanAmount').value),
+                CreditScore: parseInt(document.getElementById('creditScore').value),
+                DebtToIncome: parseFloat(document.getElementById('debtToIncome').value),
+                EmploymentYears: parseInt(document.getElementById('employmentYears').value),
+                LoanTerm: parseInt(document.getElementById('loanTerm').value)
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayResult(data);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Unable to process request. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+        
+        function displayResult(data) {
+            const result = document.getElementById('result');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultText = document.getElementById('resultText');
+            const resultDetails = document.getElementById('resultDetails');
+            
+            const probability = data.risk_probability || data.probability || 0;
+            const isHighRisk = probability > 0.5;
+            
+            result.className = `result ${isHighRisk ? 'high-risk' : 'low-risk'}`;
+            resultIcon.textContent = isHighRisk ? '⚠️' : '✅';
+            resultText.textContent = isHighRisk ? 'HIGH RISK' : 'LOW RISK';
+            resultDetails.innerHTML = `
+                Risk Probability: ${(probability * 100).toFixed(1)}%<br>
+                Confidence: ${data.confidence ? (data.confidence * 100).toFixed(1) + '%' : 'High'}<br>
+                <br><em>Powered by SAS Model Studio → Thakral One Pipeline</em>
+            `;
+            
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function showError(message) {
+            const result = document.getElementById('result');
+            result.className = 'result high-risk';
+            result.innerHTML = `
+                <div class="result-icon">❌</div>
+                <div class="result-text">ERROR</div>
+                <div class="result-details">${message}</div>
+            `;
+            result.style.display = 'block';
+        }
+        
+        function fillLowRisk() {
+            document.getElementById('income').value = '75000';
+            document.getElementById('age').value = '35';
+            document.getElementById('loanAmount').value = '200000';
+            document.getElementById('creditScore').value = '750';
+            document.getElementById('debtToIncome').value = '0.25';
+            document.getElementById('employmentYears').value = '8';
+            document.getElementById('loanTerm').value = '30';
+        }
+        
+        function fillHighRisk() {
+            document.getElementById('income').value = '25000';
+            document.getElementById('age').value = '22';
+            document.getElementById('loanAmount').value = '300000';
+            document.getElementById('creditScore').value = '500';
+            document.getElementById('debtToIncome').value = '0.8';
+            document.getElementById('employmentYears').value = '1';
+            document.getElementById('loanTerm').value = '15';
+        }
+    </script>
+</body>
+</html>

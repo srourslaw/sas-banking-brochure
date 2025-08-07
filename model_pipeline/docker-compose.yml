@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   sas-credit-api:
     # This tells Docker to build an image from the Dockerfile in the current directory (.)

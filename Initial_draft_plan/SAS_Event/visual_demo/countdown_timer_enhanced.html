@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakral One: 5-Minute Model-to-Market</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        /* Header Section */
+        .header-section {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .company-logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 3s ease infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .demo-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .demo-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        .value-proposition {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .value-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .highlight {
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+
+        /* Main Content Section */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px 1fr;
+            gap: 3rem;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Timer Section */
+        .timer-section {
+            text-align: center;
+        }
+
+        .timer-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 2rem;
+        }
+
+        .timer-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: 800;
+            z-index: 5;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 280px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.3s ease;
+        }
+
+        .progress-ring-background {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-ring-progress {
+            stroke: url(#progressGradient);
+            stroke-dasharray: 0 880;
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { stroke-width: 8; }
+            100% { stroke-width: 12; }
+        }
+
+        .timer-label {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-top: 1rem;
+        }
+
+        /* QR Code Section (Center) */
+        .qr-section {
+            text-align: center;
+            position: relative;
+        }
+
+        .qr-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qr-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            margin: -3px;
+            border-radius: 25px;
+            z-index: -1;
+        }
+
+        .qr-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qr-code.ready {
+            background: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            animation: qrGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes qrGlow {
+            0% { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
+            100% { box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3); }
+        }
+
+        .qr-instructions {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Pipeline Visualization */
+        .pipeline-section {
+            text-align: center;
+        }
+
+        .pipeline-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .pipeline-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pipeline-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0%;
+            background: linear-gradient(90deg, #667eea, #4ecdc4);
+            transition: width 0.8s ease;
+            z-index: 1;
+        }
+
+        .pipeline-step.active::before {
+            width: 100%;
+        }
+
+        .pipeline-step.active {
+            background: rgba(102, 126, 234, 0.2);
+            border-left-color: #667eea;
+            transform: translateX(10px);
+        }
+
+        .pipeline-step.completed {
+            background: rgba(76, 175, 80, 0.2);
+            border-left-color: #4caf50;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-content {
+            flex: 1;
+            text-align: left;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-name {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .step-time {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Status indicators */
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .status-light {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .status-light.active {
+            background: #ffd700;
+            box-shadow: 0 0 20px #ffd700;
+            animation: pulse 1s infinite;
+        }
+
+        .status-light.completed {
+            background: #4caf50;
+            box-shadow: 0 0 15px #4caf50;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn.primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-color: transparent;
+        }
+
+        .btn.primary:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a3d94);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* API Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            color: #333;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 1rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-btn.confirm {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .modal-btn.cancel {
+            background: #ccc;
+            color: #333;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .timer-section {
+                order: 1;
+            }
+            
+            .qr-section {
+                order: 2;
+            }
+            
+            .pipeline-section {
+                order: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .demo-title {
+                font-size: 2rem;
+            }
+            
+            .timer-container {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .timer-display {
+                font-size: 2.5rem;
+            }
+            
+            .main-content {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header class="header-section">
+            <div class="company-logo">THAKRAL ONE</div>
+            <h1 class="demo-title">5-Minute Model-to-Market</h1>
+            <p class="demo-subtitle">SAS Model Studio → Production API</p>
+            
+            <div class="value-proposition">
+                <div class="value-text">
+                    Watch as we transform a <span class="highlight">SAS credit risk model</span> into a 
+                    <span class="highlight">live production API</span> in under 5 minutes using our automated DevOps pipeline.
+                </div>
+                <div class="value-text">
+                    <strong>"SAS gives you industry-grade models; we shorten the last mile."</strong>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="timer-section">
+                <div class="timer-container">
+                    <svg class="progress-ring" width="280" height="280">
+                        <defs>
+                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#667eea"/>
+                                <stop offset="50%" style="stop-color:#4ecdc4"/>
+                                <stop offset="100%" style="stop-color:#45b7d1"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="progress-ring-circle progress-ring-background" 
+                                cx="140" cy="140" r="120"/>
+                        <circle class="progress-ring-circle progress-ring-progress" 
+                                cx="140" cy="140" r="120" 
+                                id="progressCircle"/>
+                    </svg>
+                    <div class="timer-display" id="timerDisplay">5:00</div>
+                </div>
+                <div class="timer-label">Time Remaining</div>
+                
+                <div class="status-indicators">
+                    <div class="status-light" id="light1"></div>
+                    <div class="status-light" id="light2"></div>
+                    <div class="status-light" id="light3"></div>
+                    <div class="status-light" id="light4"></div>
+                    <div class="status-light" id="light5"></div>
+                    <div class="status-light" id="light6"></div>
+                </div>
+            </section>
+
+            <section class="qr-section">
+                <div class="qr-container">
+                    <h3 class="qr-title">🚀 Test the Live API</h3>
+                    <div class="qr-code" id="qrCode">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+                            <div>QR Code will appear<br>when deployment<br>is complete</div>
+                        </div>
+                    </div>
+                    <div class="qr-instructions">Scan to test credit risk predictions</div>
+                </div>
+            </section>
+
+            <section class="pipeline-section">
+                <h3 class="pipeline-title">Pipeline Progress</h3>
+                <div class="pipeline-flow">
+                    <div class="pipeline-step" id="step1">
+                        <div class="step-icon">📊</div>
+                        <div class="step-content">
+                            <div class="step-name">SAS Model Export</div>
+                            <div class="step-time">~30 seconds</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-step" id="step2">
+                        <div class="step-icon">📝</div>
+                        <div class="step-content">
+                            <div class="step-name">Git Commit & Trigger</div>
+                            <div class="step-time">~15 seconds</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-step" id="step3">
+                        <div class="step-icon">🐳</div>
+                        <div class="step-content">
+                            <div class="step-name">Container Build</div>
+                            <div class="step-time">~90 seconds</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-step" id="step4">
+                        <div class="step-icon">🧪</div>
+                        <div class="step-content">
+                            <div class="step-name">Automated Testing</div>
+                            <div class="step-time">~45 seconds</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-step" id="step5">
+                        <div class="step-icon">🚀</div>
+                        <div class="step-content">
+                            <div class="step-name">Production Deploy</div>
+                            <div class="step-time">~60 seconds</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-step" id="step6">
+                        <div class="step-icon">✅</div>
+                        <div class="step-content">
+                            <div class="step-name">API Ready</div>
+                            <div class="step-time">Live & Accessible</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="resetDemo()">Reset</button>
+        <button class="btn" onclick="setApiUrl()" id="apiBtn">Set API URL</button>
+        <button class="btn primary" onclick="startDemo()">Start Demo</button>
+    </div>
+
+    <!-- API Status Indicator -->
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 100;">
+        <div id="apiStatus" style="padding: 10px 18px; border-radius: 25px; font-size: 13px; font-weight: 600; display: none; backdrop-filter: blur(10px); transition: all 0.3s ease;">
+            <span id="apiStatusText"></span>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div class="modal" id="welcomeModal" style="display: none;">
+        <div class="modal-content" style="max-width: 480px; text-align: center; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.95)); backdrop-filter: blur(20px); border: 2px solid rgba(102, 126, 234, 0.2);">
+            <div style="margin-bottom: 25px;">
+                <div style="font-size: 48px; margin-bottom: 15px;">🚀</div>
+                <h2 style="font-size: 28px; font-weight: 800; color: #2c3e50; margin-bottom: 10px;">Welcome to Thakral One!</h2>
+                <p style="font-size: 18px; color: #667eea; font-weight: 600; margin-bottom: 8px;">5-Minute Model-to-Market Demo</p>
+                <p style="font-size: 14px; color: #6c757d; line-height: 1.5;">Experience how we transform SAS models into production APIs in minutes, not months.</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #dee2e6;">
+                <h3 style="font-size: 16px; color: #495057; margin-bottom: 10px; font-weight: 700;">🔗 Setup Required</h3>
+                <p style="font-size: 14px; color: #6c757d; line-height: 1.4; margin-bottom: 15px;">
+                    To make the demo interactive, we need your <strong>ngrok tunnel URL</strong>.<br>
+                    This enables the QR code and live API testing.
+                </p>
+                <div style="background: rgba(102, 126, 234, 0.1); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; color: #495057;">
+                    Example: https://abc123.ngrok-free.app
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="welcomeSetApiUrl()" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 14px 28px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;">
+                    🚀 Set API URL
+                </button>
+                <button onclick="closeWelcomeModal()" style="background: rgba(108, 117, 125, 0.1); color: #6c757d; border: 2px solid #dee2e6; padding: 14px 28px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    Skip for Now
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px; font-size: 12px; color: #adb5bd;">
+                💡 You can always set this later using the "Set API URL" button
+            </div>
+        </div>
+    </div>
+
+    <!-- API URL Modal -->
+    <div class="modal" id="apiModal">
+        <div class="modal-content" style="background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.95)); backdrop-filter: blur(20px); border: 2px solid rgba(102, 126, 234, 0.2);">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="font-size: 32px; margin-bottom: 10px;">🔗</div>
+                <h3 style="font-size: 24px; font-weight: 700; color: #2c3e50; margin-bottom: 8px;">Set API Endpoint</h3>
+                <p style="color: #6c757d; font-size: 14px;">Configure your ngrok tunnel for live demo</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px; font-size: 14px;">
+                    🌐 ngrok Tunnel URL
+                </label>
+                <input type="text" id="apiUrlInput" placeholder="https://abc123.ngrok-free.app" 
+                       style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: white; transition: all 0.3s ease;">
+            </div>
+            
+            <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 15px;">
+                <button onclick="confirmApiUrl()" style="background: linear-gradient(45deg, #28a745, #20c997); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); transition: all 0.3s ease;">
+                    ✅ Connect API
+                </button>
+                <button onclick="closeApiModal()" style="background: rgba(108, 117, 125, 0.1); color: #6c757d; border: 2px solid #dee2e6; padding: 12px 24px; border-radius: 25px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    ❌ Cancel
+                </button>
+            </div>
+            
+            <div id="apiModalStatus" style="text-align: center; font-size: 13px; padding: 8px; border-radius: 8px; margin-top: 10px; display: none;"></div>
+            
+            <div style="background: rgba(102, 126, 234, 0.1); padding: 15px; border-radius: 10px; font-size: 12px; color: #6c757d; text-align: center;">
+                💡 <strong>Tip:</strong> Start ngrok with <code>ngrok http 8080</code> to get your tunnel URL
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 300;
+        let timerInterval;
+        let demoRunning = false;
+        let currentStep = 0;
+        let apiEndpoint = null;
+
+        const steps = [
+            { name: 'SAS Model Export', duration: 30 },
+            { name: 'Git Commit', duration: 15 },
+            { name: 'Container Build', duration: 90 },
+            { name: 'Testing', duration: 45 },
+            { name: 'Production Deploy', duration: 60 },
+            { name: 'API Ready', duration: 60 }
+        ];
+
+        // Initialize particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgressRing() {
+            const progress = (300 - timeLeft) / 300;
+            const circumference = 2 * Math.PI * 120;
+            const strokeDasharray = circumference * progress;
+            document.getElementById('progressCircle').style.strokeDasharray = 
+                `${strokeDasharray} ${circumference}`;
+        }
+
+        function updateStep(stepIndex, status) {
+            const stepElement = document.getElementById(`step${stepIndex + 1}`);
+            const lightElement = document.getElementById(`light${stepIndex + 1}`);
+            
+            stepElement.className = 'pipeline-step';
+            lightElement.className = 'status-light';
+            
+            if (status === 'active') {
+                stepElement.classList.add('active');
+                lightElement.classList.add('active');
+            } else if (status === 'completed') {
+                stepElement.classList.add('completed');
+                lightElement.classList.add('completed');
+            }
+        }
+
+        function generateQR(text) {
+            const qrData = encodeURIComponent(JSON.stringify({
+                endpoint: text,
+                demo: "Thakral One SAS Demo",
+                instructions: "Test our live credit risk API"
+            }));
+            
+            const qrElement = document.getElementById('qrCode');
+            qrElement.innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${qrData}" 
+                     alt="QR Code" 
+                     style="width: 180px; height: 180px; border-radius: 10px;"
+                     onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\\'padding: 20px; text-align: center;\\'>✅ API Ready!<br><br>Endpoint:<br>${text}</div>';">
+            `;
+            qrElement.classList.add('ready');
+        }
+
+        function startDemo() {
+            if (demoRunning) return;
+            
+            demoRunning = true;
+            currentStep = 0;
+            timeLeft = 300;
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                updateProgressRing();
+                
+                if (timeLeft <= 0) {
+                    finishDemo();
+                    return;
+                }
+                
+                let totalTime = 0;
+                let activeStep = -1;
+                
+                for (let i = 0; i < steps.length; i++) {
+                    totalTime += steps[i].duration;
+                    if (300 - timeLeft <= totalTime) {
+                        activeStep = i;
+                        break;
+                    }
+                }
+                
+                for (let i = 0; i < steps.length; i++) {
+                    if (i < activeStep) {
+                        updateStep(i, 'completed');
+                    } else if (i === activeStep) {
+                        updateStep(i, 'active');
+                    } else {
+                        updateStep(i, 'inactive');
+                    }
+                }
+                
+                if (activeStep >= 5 && apiEndpoint) {
+                    generateQR(apiEndpoint);
+                }
+                
+            }, 1000);
+        }
+
+        function finishDemo() {
+            clearInterval(timerInterval);
+            demoRunning = false;
+            
+            for (let i = 0; i < steps.length; i++) {
+                updateStep(i, 'completed');
+            }
+            
+            if (apiEndpoint) {
+                generateQR(apiEndpoint);
+            }
+            
+            // Success animation
+            document.body.style.animation = 'gradientShift 2s ease infinite';
+        }
+
+        function resetDemo() {
+            clearInterval(timerInterval);
+            demoRunning = false;
+            timeLeft = 300;
+            currentStep = 0;
+            
+            updateTimer();
+            updateProgressRing();
+            
+            for (let i = 0; i < steps.length; i++) {
+                updateStep(i, 'inactive');
+            }
+            
+            const qrElement = document.getElementById('qrCode');
+            qrElement.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+                    <div>QR Code will appear<br>when deployment<br>is complete</div>
+                </div>
+            `;
+            qrElement.classList.remove('ready');
+        }
+
+        // API URL Management
+        function setApiUrl() {
+            document.getElementById('apiModal').style.display = 'flex';
+            document.getElementById('apiUrlInput').value = apiEndpoint || '';
+        }
+
+        function closeApiModal() {
+            document.getElementById('apiModal').style.display = 'none';
+        }
+
+        async function confirmApiUrl() {
+            const url = document.getElementById('apiUrlInput').value.trim();
+            const statusDiv = document.getElementById('apiModalStatus');
+            
+            if (!url) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(220, 53, 69, 0.1)';
+                statusDiv.style.color = '#dc3545';
+                statusDiv.style.border = '1px solid rgba(220, 53, 69, 0.3)';
+                statusDiv.innerHTML = '❌ Please enter a URL';
+                return;
+            }
+            
+            try {
+                new URL(url);
+            } catch (e) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(220, 53, 69, 0.1)';
+                statusDiv.style.color = '#dc3545';
+                statusDiv.style.border = '1px solid rgba(220, 53, 69, 0.3)';
+                statusDiv.innerHTML = '❌ Invalid URL format';
+                return;
+            }
+            
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = 'rgba(102, 126, 234, 0.1)';
+            statusDiv.style.color = '#667eea';
+            statusDiv.style.border = '1px solid rgba(102, 126, 234, 0.3)';
+            statusDiv.innerHTML = '🔄 Testing API connection...';
+            
+            try {
+                const response = await fetch(url + '/health', { 
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    apiEndpoint = url;
+                    statusDiv.style.background = 'rgba(40, 167, 69, 0.1)';
+                    statusDiv.style.color = '#28a745';
+                    statusDiv.style.border = '1px solid rgba(40, 167, 69, 0.3)';
+                    statusDiv.innerHTML = '✅ API connection confirmed!';
+                } else {
+                    statusDiv.style.background = 'rgba(255, 193, 7, 0.1)';
+                    statusDiv.style.color = '#e67e22';
+                    statusDiv.style.border = '1px solid rgba(255, 193, 7, 0.3)';
+                    statusDiv.innerHTML = '⚠️ API not responding, but URL saved';
+                    apiEndpoint = url;
+                }
+            } catch (error) {
+                statusDiv.style.background = 'rgba(255, 193, 7, 0.1)';
+                statusDiv.style.color = '#e67e22';
+                statusDiv.style.border = '1px solid rgba(255, 193, 7, 0.3)';
+                statusDiv.innerHTML = '⚠️ Cannot test connection, but URL saved';
+                apiEndpoint = url;
+            }
+            
+            setTimeout(() => {
+                closeApiModal();
+            }, 1500);
+        }
+
+        // Auto-prompt for API URL on page load with beautiful modal
+        function checkApiEndpoint() {
+            if (!apiEndpoint) {
+                setTimeout(() => {
+                    showWelcomeModal();
+                }, 1500);
+            }
+        }
+
+        function showWelcomeModal() {
+            const welcomeModal = document.getElementById('welcomeModal');
+            welcomeModal.style.display = 'flex';
+        }
+
+        function closeWelcomeModal() {
+            const welcomeModal = document.getElementById('welcomeModal');
+            welcomeModal.style.display = 'none';
+        }
+
+        function welcomeSetApiUrl() {
+            closeWelcomeModal();
+            setApiUrl();
+        }
+
+        // Save API URL to localStorage
+        function saveApiUrl(url) {
+            localStorage.setItem('thakral_api_url', url);
+        }
+
+        function loadApiUrl() {
+            const savedUrl = localStorage.getItem('thakral_api_url');
+            if (savedUrl) {
+                apiEndpoint = savedUrl;
+                console.log('🔗 Loaded saved API URL:', savedUrl);
+                updateApiStatus();
+            }
+        }
+
+        function updateApiStatus() {
+            const statusDiv = document.getElementById('apiStatus');
+            const statusText = document.getElementById('apiStatusText');
+            const apiBtn = document.getElementById('apiBtn');
+            
+            if (apiEndpoint) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+                statusDiv.style.color = 'white';
+                statusDiv.style.boxShadow = '0 4px 15px rgba(40, 167, 69, 0.4)';
+                statusDiv.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+                statusText.textContent = `✅ Connected: ${apiEndpoint.replace('https://', '').substring(0, 15)}...`;
+                apiBtn.textContent = '🔄 Change API';
+                apiBtn.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+            } else {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
+                statusDiv.style.color = 'white';
+                statusDiv.style.boxShadow = '0 4px 15px rgba(220, 53, 69, 0.4)';
+                statusDiv.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+                statusText.textContent = '⚠️ API Not Set';
+                apiBtn.textContent = '🚀 Set API URL';
+                apiBtn.style.background = 'linear-gradient(45px, #ff6b6b, #ee5a52)';
+            }
+        }
+
+        // Enhanced confirmApiUrl with saving
+        const originalConfirmApiUrl = confirmApiUrl;
+        confirmApiUrl = async function() {
+            await originalConfirmApiUrl();
+            if (apiEndpoint) {
+                saveApiUrl(apiEndpoint);
+                updateApiStatus();
+            }
+        };
+
+        // Initialize
+        createParticles();
+        updateTimer();
+        updateProgressRing();
+        loadApiUrl();
+        checkApiEndpoint();
+        updateApiStatus();
+    </script>
+</body>
+</html>

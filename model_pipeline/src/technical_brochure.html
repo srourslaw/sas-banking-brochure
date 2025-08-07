@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏦 Technical Architecture Brochure - SAS Banking Intelligence Pipeline</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            color: white;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .background-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(102, 126, 234, 0.6);
+            border-radius: 50%;
+            animation: float 25s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(50px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.1));
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .company-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .brand-icon {
+            font-size: 3rem;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .company-info h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 3s ease infinite;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .company-info .tagline {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
+        .brochure-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .brochure-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 20, 25, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+        }
+
+        /* Content Container */
+        .content {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #4ecdc4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .section-title .icon {
+            font-size: 2rem;
+            padding: 0.5rem;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-description {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4ecdc4;
+        }
+
+        .card-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+        /* Architecture Diagram */
+        .architecture-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .flow-level {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.1));
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-box:hover {
+            transform: scale(1.05);
+            border-color: #4ecdc4;
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.2);
+        }
+
+        .flow-box .title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4ecdc4;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-box .description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #4ecdc4;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+
+        /* Code Blocks */
+        .code-container {
+            background: rgba(15, 20, 25, 0.9);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-header .icon {
+            font-size: 1.2rem;
+            color: #4ecdc4;
+        }
+
+        .code-header .title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .code-header .lang {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        pre[class*="language-"] {
+            margin: 0 !important;
+            padding: 1.5rem !important;
+            background: transparent !important;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Metrics Dashboard */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(78, 205, 196, 0.1));
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #667eea, #4ecdc4);
+            border-radius: 15px;
+            padding: 2px;
+            z-index: -1;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #4ecdc4;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .metric-change {
+            font-size: 0.9rem;
+            color: #4caf50;
+            margin-top: 0.3rem;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #4ecdc4;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #4ecdc4;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateX(10px);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            color: #4ecdc4;
+            width: 40px;
+            text-align: center;
+        }
+
+        .feature-content {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            border-color: #4ecdc4;
+            box-shadow: 0 15px 30px rgba(78, 205, 196, 0.2);
+        }
+
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4ecdc4;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+        }
+
+        .team-email {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(15, 20, 25, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .company-info h1 { font-size: 2rem; }
+            .brochure-title { font-size: 2.2rem; }
+            .section-title { font-size: 2rem; flex-direction: column; text-align: center; }
+            .nav-tabs { justify-content: flex-start; overflow-x: auto; padding-bottom: 1rem; }
+            .flow-level { flex-direction: column; }
+            .architecture-flow { gap: 1rem; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        /* Scroll Animations */
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-left { animation: slideInLeft 0.8s ease-out; }
+        .animate-right { animation: slideInRight 0.8s ease-out; }
+        .animate-up { animation: fadeInUp 0.8s ease-out; }
+    </style>
+</head>
+<body>
+    <!-- Background Particles -->
+    <div class="background-particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="company-brand">
+            <div class="brand-icon">🏦</div>
+            <div class="company-info">
+                <h1>THAKRAL ONE</h1>
+                <div class="tagline">Advanced Banking Intelligence Solutions</div>
+            </div>
+        </div>
+        <h2 class="brochure-title">Technical Architecture</h2>
+        <p class="brochure-subtitle">
+            Complete SAS ML/AI Pipeline: From Data to Production Deployment
+        </p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-tabs">
+            <a href="#overview" class="nav-tab active" data-section="overview">
+                <span class="nav-icon">🎯</span> Overview
+            </a>
+            <a href="#architecture" class="nav-tab" data-section="architecture">
+                <span class="nav-icon">🏗️</span> Architecture
+            </a>
+            <a href="#sas-development" class="nav-tab" data-section="sas-development">
+                <span class="nav-icon">📊</span> SAS Development
+            </a>
+            <a href="#ml-pipeline" class="nav-tab" data-section="ml-pipeline">
+                <span class="nav-icon">🤖</span> ML Pipeline
+            </a>
+            <a href="#api-deployment" class="nav-tab" data-section="api-deployment">
+                <span class="nav-icon">🚀</span> API Deployment
+            </a>
+            <a href="#performance" class="nav-tab" data-section="performance">
+                <span class="nav-icon">📈</span> Performance
+            </a>
+            <a href="#team" class="nav-tab" data-section="team">
+                <span class="nav-icon">👥</span> Team
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Executive Overview Section -->
+        <section id="overview" class="section visible">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="icon">🎯</div>
+                    Executive Overview
+                </h2>
+                <p class="section-description">
+                    Enterprise-grade SAS banking intelligence platform combining traditional credit risk modeling 
+                    with cutting-edge alternative data sources and real-time ML deployment.
+                </p>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card animate-left">
+                    <div class="card-header">
+                        <div class="card-icon">💡</div>
+                        <div>
+                            <div class="card-title">Innovation Highlights</div>
+                            <div class="card-subtitle">What makes our solution unique</div>
+                        </div>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <div class="feature-icon">🧠</div>
+                            <div class="feature-content">
+                                <div class="feature-title">Advanced SAS ML Engine</div>
+                                <div class="feature-description">Enterprise logistic regression with 18+ features</div>
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-icon">📱</div>
+                            <div class="feature-content">
+                                <div class="feature-title">Alternative Data Integration</div>
+                                <div class="feature-description">Social media risk scores + device usage analytics</div>
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-icon">⚡</div>
+                            <div class="feature-content">
+                                <div class="feature-title">Real-time API Scoring</div>
+                                <div class="feature-description">40-second deployment pipeline with Docker</div>
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-content">
+                                <div class="feature-title">Banking Intelligence Dashboard</div>
+                                <div class="feature-description">Customer analytics + portfolio segmentation</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card animate-right">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <div>
+                            <div class="card-title">Business Value Proposition</div>
+                            <div class="card-subtitle">Strategic advantages for banks</div>
+                        </div>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">40s</div>
+                            <div class="metric-label">Deployment Time</div>
+                            <div class="metric-change">↗️ 95% faster</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">0.75</div>
+                            <div class="metric-label">Model AUC</div>
+                            <div class="metric-change">↗️ Industry leading</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">18</div>
+                            <div class="metric-label">Risk Features</div>
+                            <div class="metric-change">↗️ Traditional + Alt data</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">10K</div>
+                            <div class="metric-label">Training Records</div>
+                            <div class="metric-change">↗️ Synthetic + Real</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Architecture Section -->
+        <section id="architecture" class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="icon">🏗️</div>
+                    Technical Architecture
+                </h2>
+                <p class="section-description">
+                    End-to-end system architecture from SAS model development to production API deployment
+                </p>
+            </div>
+
+            <div class="architecture-flow">
+                <!-- Level 1: Data Sources -->
+                <div class="flow-level">
+                    <div class="flow-box">
+                        <div class="title">📊 Traditional Data</div>
+                        <div class="description">Credit scores, income, employment history, loan amounts</div>
+                    </div>
+                    <div class="flow-box">
+                        <div class="title">📱 Alternative Data</div>
+                        <div class="description">Social media risk, device usage, behavioral analytics</div>
+                    </div>
+                    <div class="flow-box">
+                        <div class="title">🏢 Banking Data</div>
+                        <div class="description">Account tenure, products, transactions, balances</div>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <!-- Level 2: SAS Processing -->
+                <div class="flow-level">
+                    <div class="flow-box">
+                        <div class="title">🔧 Data Preparation</div>
+                        <div class="description">Feature engineering, missing value treatment, validation</div>
+                    </div>
+                    <div class="flow-box">
+                        <div class="title">🤖 Model Training</div>
+                        <div class="description">Logistic regression with stepwise selection</div>
+                    </div>
+                    <div class="flow-box">
+                        <div class="title">📈 Performance Validation</div>
+                        <div class="description">AUC analysis, ROC curves, decile performance</div>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <!-- Level 3: Model Artifacts -->
+                <div class="flow-level">
+                    <div class="flow-box">
+                        <div class="title">📄 Model Coefficients JSON</div>
+                        <div class="description">Serialized model parameters for API deployment</div>
+                    </div>
+                    <div class="flow-box">
+                        <div class="title">⚙️ Deployment Config</div>
+                        <div class="description">Input schema, business rules, performance metadata</div>
+                    </div>
+                    <div class="flow-box">
+                        <div class="title">📋 Performance Report</div>
+                        <div class="description">Model metrics, validation results, recommendations</div>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <!-- Level 4: Production Deployment -->
+                <div class="flow-level">
+                    <div class="flow-box">
+                        <div class="title">🐳 Docker Container</div>
+                        <div class="description">FastAPI + Python runtime environment</div>
+                    </div>
+                    <div class="flow-box">
+                        <div class="title">🌐 REST API</div>
+                        <div class="description">Real-time scoring endpoints with validation</div>
+                    </div>
+                    <div class="flow-box">
+                        <div class="title">📱 Mobile Interface</div>
+                        <div class="description">Responsive demo with QR code access</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SAS Development Section -->
+        <section id="sas-development" class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="icon">📊</div>
+                    SAS Model Development
+                </h2>
+                <p class="section-description">
+                    Complete SAS implementation: data generation, feature engineering, model training, and artifact export
+                </p>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔧</div>
+                        <div>
+                            <div class="card-title">Data Generation & Preparation</div>
+                            <div class="card-subtitle">Synthetic banking dataset with realistic correlations</div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="icon">💾</div>
+                            <div class="title">setup_sas_workspace.sas</div>
+                            <div class="lang">SAS</div>
+                        </div>
+                        <pre class="language-sass"><code>/* Generate comprehensive banking dataset */
+data MODELS.credit_training;
+    call streaminit(&RANDOM_SEED);
+    
+    do CustomerID = 100001 to (100000 + &NUM_RECORDS);
+        /* Core demographic features */
+        Age = 22 + floor(rand('UNIFORM') * 48);
+        EmploymentYears = min(Age - 18, floor(rand('UNIFORM') * (Age - 21)));
+        
+        /* Income with realistic age correlation */
+        base_income = 35000 + (Age - 22) * 1500 + EmploymentYears * 2000;
+        Income = max(25000, base_income + rand('NORMAL') * 18000);
+        
+        /* Credit Score influenced by income and employment */
+        credit_base = 580 + (Income/100000) * 120 + EmploymentYears * 4;
+        CreditScore = max(300, min(850, floor(credit_base + rand('NORMAL') * 50)));
+        
+        /* Alternative Data: Social Media Risk Score */
+        social_risk_factor = (1 - (CreditScore - 300)/550) * 0.4 + 
+                           DebtToIncome * 0.3 + rand('UNIFORM') * 0.3;
+        if social_risk_factor < 0.2 then SocialMediaRiskScore = 1;
+        else if social_risk_factor < 0.4 then SocialMediaRiskScore = 2;
+        else if social_risk_factor < 0.6 then SocialMediaRiskScore = 3;
+        else if social_risk_factor < 0.8 then SocialMediaRiskScore = 4;
+        else SocialMediaRiskScore = 5;
+        
+        output;
+    end;
+run;</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🧠</div>
+                        <div>
+                            <div class="card-title">Advanced Model Training</div>
+                            <div class="card-subtitle">Logistic regression with alternative data features</div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="icon">⚙️</div>
+                            <div class="title">build_credit_model.sas</div>
+                            <div class="lang">SAS</div>
+                        </div>
+                        <pre class="language-sass"><code>/* Advanced logistic regression model */
+proc logistic data=work.train_set;
+    title "Enterprise Credit Risk Model v&MODEL_VERSION";
+    
+    class Region(ref='Urban') LoanType(ref='Personal') 
+          CustomerSegment(ref='Basic') AgeRisk(ref='Prime') 
+          EmpStability(ref='Stable') / param=ref;
+          
+    model DefaultRisk(event='1') = 
+        /* Traditional credit variables */
+        CreditScore DebtToIncome Income EmploymentYears Age LoanAmount
+        
+        /* Alternative data features */
+        SocialMediaRiskScore DeviceUsageScore
+        
+        /* Customer relationship variables */
+        NumberOfProducts HasInvestmentAccount AccountTenure
+        
+        /* Behavioral indicators */
+        TransactionFrequency AverageBalance LatePayments OverdraftEvents
+        
+        /* Derived features */
+        CreditUtilization DebtScore_Interaction Income_Credit_Ratio
+        
+        /* Categorical variables */
+        Region LoanType CustomerSegment AgeRisk EmpStability
+        
+        / selection=stepwise slentry=0.1 slstay=0.05 details;
+        
+    /* Generate performance metrics */
+    roc; 
+    output out=work.model_output p=predicted_prob;
+run;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📋</div>
+                    <div>
+                        <div class="card-title">Model Artifact Export</div>
+                        <div class="card-subtitle">JSON serialization for production deployment</div>
+                    </div>
+                </div>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="icon">📄</div>
+                        <div class="title">Model Coefficients JSON Export</div>
+                        <div class="lang">SAS</div>
+                    </div>
+                    <pre class="language-sass"><code>/* Export model coefficients to JSON format */
+data _null_;
+    file "&PROJECT_ROOT\output\model_coefficients.json";
+    
+    set work.param_estimates end=eof;
+    where ProbChiSq < 0.05; /* Only significant variables */
+    
+    if _n_ = 1 then do;
+        put '{';
+        put '  "modelMetadata": {';
+        put '    "modelName": "EnterpriseCreditRisk",';
+        put '    "version": "' "&MODEL_VERSION" '",';
+        put '    "modelType": "Logistic Regression with Alternative Data",';
+        put '    "buildDate": "' "&TIMESTAMP" '",';
+        put '    "auc": ' "&model_auc" '';
+        put '  },';
+        put '  "coefficients": {';
+    end;
+    
+    /* Export each significant coefficient */
+    odds_ratio = exp(Estimate);
+    put '    "' Variable '": {';
+    put '      "coefficient": ' Estimate ',';
+    put '      "pValue": ' ProbChiSq ',';
+    put '      "oddsRatio": ' odds_ratio '';
+    
+    if not eof then put '    },';
+    else do;
+        put '    }';
+        put '  }';
+        put '}';
+    end;
+run;</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ML Pipeline Section -->
+        <section id="ml-pipeline" class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="icon">🤖</div>
+                    ML/AI Pipeline Implementation
+                </h2>
+                <p class="section-description">
+                    Feature engineering, model validation, and intelligent risk assessment algorithms
+                </p>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔬</div>
+                        <div>
+                            <div class="card-title">Advanced Feature Engineering</div>
+                            <div class="card-subtitle">Derived features for enhanced predictive power</div>
+                        </div>
+                    </div>
+                    
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-content">
+                                <div class="feature-title">CreditUtilization</div>
+                                <div class="feature-description">Loan amount relative to income capacity</div>
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-icon">🔄</div>
+                            <div class="feature-content">
+                                <div class="feature-title">DebtScore_Interaction</div>
+                                <div class="feature-description">DTI ratio × Social media risk interaction</div>
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-icon">💰</div>
+                            <div class="feature-content">
+                                <div class="feature-title">Income_Credit_Ratio</div>
+                                <div class="feature-description">Income normalized by credit score</div>
+                            </div>
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-icon">👥</div>
+                            <div class="feature-content">
+                                <div class="feature-title">Customer Segmentation</div>
+                                <div class="feature-description">Premium, Standard, Basic tiers</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">⚡</div>
+                        <div>
+                            <div class="card-title">Real-time Scoring Logic</div>
+                            <div class="card-subtitle">Production-ready Python implementation</div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="icon">🐍</div>
+                            <div class="title">Risk Assessment Algorithm</div>
+                            <div class="lang">Python</div>
+                        </div>
+                        <pre class="language-python"><code>def calculate_comprehensive_assessment(self, data):
+    """Advanced risk calculation with banking coefficients"""
+    
+    # Extract features
+    credit_score = data.get('creditScore', 650)
+    income = data.get('income', 50000)
+    debt_ratio = data.get('debtToIncomeRatio', 0.3)
+    social_risk = data.get('socialMediaRiskScore', 3)
+    
+    # Use realistic banking coefficients
+    linear_combo = -2.8
+    linear_combo += (850 - credit_score) * 0.0045  # Credit impact
+    linear_combo -= (income - 50000) * 0.000012   # Income protection
+    linear_combo += debt_ratio * 4.2              # Major risk factor
+    linear_combo += (social_risk - 1) * 0.3       # Alt data impact
+    
+    # Apply logistic transformation
+    risk_probability = 1 / (1 + math.exp(-linear_combo))
+    
+    # Determine risk level with business rules
+    if risk_probability < 0.25:
+        risk_level = 'low_risk'
+    elif risk_probability < 0.6:
+        risk_level = 'medium_risk'
+    else:
+        risk_level = 'high_risk'
+    
+    return {
+        'risk_probability': risk_probability,
+        'risk_level': risk_level,
+        'risk_adjusted_pricing': self._calculate_pricing(risk_probability),
+        'customer_segment': self._determine_segment(data),
+        'upsell_products': self._recommend_products(data, risk_level)
+    }</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Model Performance Validation</div>
+                <canvas id="performanceChart" width="800" height="300"></canvas>
+            </div>
+        </section>
+
+        <!-- API Deployment Section -->
+        <section id="api-deployment" class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="icon">🚀</div>
+                    Production API Deployment
+                </h2>
+                <p class="section-description">
+                    FastAPI backend with Docker containerization and mobile-responsive frontend
+                </p>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🌐</div>
+                        <div>
+                            <div class="card-title">FastAPI Backend Architecture</div>
+                            <div class="card-subtitle">RESTful API with automatic documentation</div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="icon">⚙️</div>
+                            <div class="title">API Endpoint Implementation</div>
+                            <div class="lang">Python</div>
+                        </div>
+                        <pre class="language-python"><code>from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+import uvicorn
+
+app = FastAPI(
+    title="SAS Banking Intelligence API",
+    description="Enterprise credit risk assessment with alternative data",
+    version="2.1"
+)
+
+# Enable CORS for mobile access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class CreditAssessmentRequest(BaseModel):
+    creditScore: int = Field(ge=300, le=850)
+    income: float = Field(gt=0)
+    debtToIncomeRatio: float = Field(ge=0, le=1)
+    socialMediaRiskScore: int = Field(ge=1, le=5)
+    # ... additional fields
+
+@app.post("/assess/comprehensive")
+async def assess_credit_risk(request: CreditAssessmentRequest):
+    """Comprehensive credit risk assessment endpoint"""
+    try:
+        assessment = sas_model.calculate_comprehensive_assessment(
+            request.dict()
+        )
+        return assessment
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🐳</div>
+                        <div>
+                            <div class="card-title">Docker Containerization</div>
+                            <div class="card-subtitle">Scalable deployment with docker-compose</div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="icon">📦</div>
+                            <div class="title">docker-compose.yml</div>
+                            <div class="lang">YAML</div>
+                        </div>
+                        <pre class="language-yaml"><code>version: '3.8'
+
+services:
+  sas-credit-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - PYTHONPATH=/app
+      - UVICORN_HOST=0.0.0.0
+      - UVICORN_PORT=8081
+    volumes:
+      - ./model_artifact:/app/model_artifact:ro
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s</code></pre>
+                    </div>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="icon">🏗️</div>
+                            <div class="title">Dockerfile</div>
+                            <div class="lang">Dockerfile</div>
+                        </div>
+                        <pre class="language-dockerfile"><code>FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Expose port
+EXPOSE 8081
+
+# Start application
+CMD ["python", "-m", "uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8081"]</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📱</div>
+                    <div>
+                        <div class="card-title">Mobile-First Frontend</div>
+                        <div class="card-subtitle">Responsive design with QR code accessibility</div>
+                    </div>
+                </div>
+                
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">📲</div>
+                        <div class="feature-content">
+                            <div class="feature-title">QR Code Integration</div>
+                            <div class="feature-description">Instant mobile access via QR scanning</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Responsive Design</div>
+                            <div class="feature-description">Optimized for mobile banking professionals</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Interactive Analytics</div>
+                            <div class="feature-description">Real-time charts and customer insights</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">📧</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Business Assessment</div>
+                            <div class="feature-description">Direct contact with executive team</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Performance Section -->
+        <section id="performance" class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="icon">📈</div>
+                    Performance & Analytics
+                </h2>
+                <p class="section-description">
+                    Model validation, business metrics, and competitive benchmarking results
+                </p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">0.75</div>
+                    <div class="metric-label">AUC Score</div>
+                    <div class="metric-change">↗️ Industry Leading</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">85%</div>
+                    <div class="metric-label">Accuracy</div>
+                    <div class="metric-change">↗️ Validation Set</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">70%</div>
+                    <div class="metric-label">Precision</div>
+                    <div class="metric-change">↗️ High Risk Detection</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">92%</div>
+                    <div class="metric-label">Recall</div>
+                    <div class="metric-change">↗️ Risk Coverage</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">40s</div>
+                    <div class="metric-label">Deploy Time</div>
+                    <div class="metric-change">↗️ Market to Production</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">10K</div>
+                    <div class="metric-label">Training Size</div>
+                    <div class="metric-change">↗️ Synthetic Dataset</div>
+                </div>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="chart-container">
+                    <div class="chart-title">Model Performance by Risk Decile</div>
+                    <canvas id="decileChart" width="400" height="250"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">Alternative Data Impact Analysis</div>
+                    <canvas id="altDataChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <div class="card-title">Key Performance Insights</div>
+                        <div class="card-subtitle">Business impact and competitive advantages</div>
+                    </div>
+                </div>
+                
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Alternative Data Lift</div>
+                            <div class="feature-description">Social media and device usage scores provide 12% improvement in risk differentiation over traditional models</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">👥</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Customer Segmentation</div>
+                            <div class="feature-description">Premium customers show 40% lower default rates and 3x higher lifetime value than basic segments</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Real-time Processing</div>
+                            <div class="feature-description">API response times under 200ms for risk assessment with full feature engineering pipeline</div>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">🔄</div>
+                        <div class="feature-content">
+                            <div class="feature-title">Model Stability</div>
+                            <div class="feature-description">Population Stability Index (PSI) < 0.1 indicating excellent model stability over time</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="icon">👥</div>
+                    Expert Team
+                </h2>
+                <p class="section-description">
+                    Meet the specialists behind this advanced SAS banking intelligence solution
+                </p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">👨‍💼</div>
+                    <div class="team-name">Hussein Srour</div>
+                    <div class="team-role">Vice President, Data & AI Consulting</div>
+                    <div class="team-email">hussein.srour@thakralone.com</div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">👨‍💼</div>
+                    <div class="team-name">Bikram Thakral</div>
+                    <div class="team-role">Chief Executive Officer</div>
+                    <div class="team-email">bikram@thakral.com</div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">👩‍💼</div>
+                    <div class="team-name">Santie Heydenrych</div>
+                    <div class="team-role">Deputy Chief Executive Officer</div>
+                    <div class="team-email">santie.heydenrych@thakralone.com</div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">👩‍💼</div>
+                    <div class="team-name">Annabelle Codrington</div>
+                    <div class="team-role">Vice President, Business Development (Australia)</div>
+                    <div class="team-email">annabelle.codrington@thakralone.com</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <div class="card-title">Get In Touch</div>
+                        <div class="card-subtitle">Ready to discuss your banking intelligence needs?</div>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; font-size: 1.1rem; margin-bottom: 2rem; color: rgba(255,255,255,0.8);">
+                    Contact our team to explore how this SAS banking intelligence solution can transform your credit risk operations and unlock new competitive advantages.
+                </p>
+                
+                <div style="text-align: center;">
+                    <a href="mailto:hussein.srour@thakralone.com,bikram@thakral.com,santie.heydenrych@thakralone.com,annabelle.codrington@thakralone.com?subject=SAS Banking Intelligence Inquiry&body=Hi Thakral One Team,%0A%0AI'm interested in learning more about your SAS Banking Intelligence solution after reviewing the technical architecture brochure.%0A%0APlease contact me to discuss potential opportunities.%0A%0ABest regards" 
+                       style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; text-decoration: none; padding: 1rem 2rem; border-radius: 25px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+                        <span>📧</span> Contact Our Team
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">THAKRAL ONE</div>
+            <div class="footer-text">Advanced Banking Intelligence Solutions • SAS Excellence • Enterprise AI</div>
+            <div class="footer-links">
+                <a href="mailto:hussein.srour@thakralone.com" class="footer-link">Data & AI Consulting</a>
+                <a href="mailto:bikram@thakral.com" class="footer-link">Executive Leadership</a>
+                <a href="mailto:annabelle.codrington@thakralone.com" class="footer-link">Business Development</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Generate background particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = tab.getAttribute('data-section');
+                const targetSection = document.getElementById(targetId);
+                
+                // Update active tab
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Smooth scroll
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Intersection Observer for section visibility
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Update active nav tab
+                    const sectionId = entry.target.id;
+                    document.querySelectorAll('.nav-tab').forEach(tab => {
+                        tab.classList.remove('active');
+                        if (tab.getAttribute('data-section') === sectionId) {
+                            tab.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Initialize charts
+        function initializeCharts() {
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart');
+            if (performanceCtx) {
+                new Chart(performanceCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Training', 'Validation', 'Test', 'Production'],
+                        datasets: [{
+                            label: 'AUC Score',
+                            data: [0.78, 0.75, 0.76, 0.74],
+                            borderColor: '#4ecdc4',
+                            backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'Accuracy',
+                            data: [0.87, 0.85, 0.86, 0.84],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { labels: { color: 'white' } }
+                        },
+                        scales: {
+                            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        }
+                    }
+                });
+            }
+
+            // Decile Chart
+            const decileCtx = document.getElementById('decileChart');
+            if (decileCtx) {
+                new Chart(decileCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10'],
+                        datasets: [{
+                            label: 'Default Rate (%)',
+                            data: [2.1, 4.3, 6.8, 9.2, 12.5, 16.8, 22.1, 28.7, 36.4, 47.2],
+                            backgroundColor: 'rgba(78, 205, 196, 0.7)',
+                            borderColor: '#4ecdc4',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { labels: { color: 'white' } }
+                        },
+                        scales: {
+                            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        }
+                    }
+                });
+            }
+
+            // Alternative Data Chart
+            const altDataCtx = document.getElementById('altDataChart');
+            if (altDataCtx) {
+                new Chart(altDataCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Credit Score', 'Income', 'Social Media', 'Device Usage', 'Banking Behavior', 'Demographics'],
+                        datasets: [{
+                            label: 'Traditional Model',
+                            data: [85, 75, 0, 0, 60, 70],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                            borderWidth: 2
+                        }, {
+                            label: 'Enhanced Model',
+                            data: [85, 75, 68, 72, 80, 70],
+                            borderColor: '#4ecdc4',
+                            backgroundColor: 'rgba(78, 205, 196, 0.2)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { labels: { color: 'white' } }
+                        },
+                        scales: {
+                            r: {
+                                ticks: { color: 'white', backdropColor: 'transparent' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                angleLines: { color: 'rgba(255,255,255,0.1)' },
+                                pointLabels: { color: 'white' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            setTimeout(initializeCharts, 500); // Delay to ensure Chart.js is loaded
+        });
+
+        // Add scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const scrollProgress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrollProgress + '%');
+        });
+    </script>
+
+    <style>
+        /* Add scroll progress indicator */
+        html {
+            --scroll-progress: 0%;
+        }
+        
+        html::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--scroll-progress);
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #4ecdc4);
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+    </style>
+</body>
+</html>

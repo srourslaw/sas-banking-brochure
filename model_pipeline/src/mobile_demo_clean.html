@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SAS Banking Intelligence - Mobile Demo</title>
+    <style>
+        /* STEP 1: BASIC RESET AND MOBILE FOUNDATION */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .mobile-container {
+            width: 100%;
+            max-width: 100vw;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .header p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+            text-align: center;
+        }
+        
+        .text-samples {
+            margin-bottom: 20px;
+        }
+        
+        .text-samples h3 {
+            font-size: 16px;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .text-samples p {
+            font-size: 14px;
+            color: white;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .button-test {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .button-test:active {
+            transform: scale(0.98);
+        }
+        
+        .input-test {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .input-test::placeholder {
+            color: #666;
+        }
+        
+        .status-good {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #4caf50;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+        
+        .status-bad {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+        
+        /* Step 2: Scenario Cards */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .scenario-card:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .scenario-card.selected {
+            border-color: #4caf50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+        
+        .scenario-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .scenario-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .scenario-details {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .scenario-metric {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 2px 0;
+        }
+        
+        /* Step 3: Assessment Form */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4caf50;
+            background: white;
+        }
+        
+        .assess-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .assess-button:active {
+            transform: scale(0.98);
+        }
+        
+        .assess-button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Header Test -->
+        <div class="header">
+            <h1>🏦 SAS Banking Intelligence</h1>
+            <p>Mobile Demo - Complete & Ready</p>
+        </div>
+        
+        <!-- Quick Access Panel -->
+        <div class="test-section" style="background: rgba(76, 175, 80, 0.1); border: 1px solid #4caf50;">
+            <div class="test-title">⚡ Quick Start</div>
+            <p style="text-align: center; margin-bottom: 15px; color: rgba(255,255,255,0.9); font-size: 14px;">
+                Explore SAS Banking Intelligence capabilities and assess your AI use case
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                <button onclick="document.getElementById('assessmentForm').scrollIntoView({behavior: 'smooth'})" 
+                        style="padding: 10px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; 
+                               border-radius: 25px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                    🎯 Calculator
+                </button>
+                <button onclick="document.querySelector('.scenario-grid').scrollIntoView({behavior: 'smooth'})" 
+                        style="padding: 10px; background: linear-gradient(45deg, #4caf50, #45a049); color: white; border: none; 
+                               border-radius: 25px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                    🏦 Scenarios
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                <button onclick="document.querySelector('.test-section[style*=\"156, 39, 176\"]').scrollIntoView({behavior: 'smooth'})" 
+                        style="padding: 10px; background: linear-gradient(45deg, #9c27b0, #7b1fa2); color: white; border: none; 
+                               border-radius: 25px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                    📊 Analytics
+                </button>
+                <button onclick="document.getElementById('assessmentBusinessForm').scrollIntoView({behavior: 'smooth'})" 
+                        style="padding: 10px; background: linear-gradient(45deg, #ff9800, #f57c00); color: white; border: none; 
+                               border-radius: 25px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                    🎯 AI Assessment
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                <button onclick="document.getElementById('contactForm').scrollIntoView({behavior: 'smooth'})" 
+                        style="padding: 10px; background: linear-gradient(45deg, #2196f3, #1976d2); color: white; border: none; 
+                               border-radius: 25px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                    📧 Connect with Thakral One
+                </button>
+            </div>
+        </div>
+        
+        
+        <!-- Step 2: Banking Scenarios -->
+        <div class="test-section">
+            <div class="test-title">🏦 Banking Customer Scenarios</div>
+            <p style="text-align: center; margin-bottom: 20px; color: rgba(255,255,255,0.9);">
+                Choose a customer profile to test SAS Banking Intelligence
+            </p>
+            
+            <!-- Scenario Cards -->
+            <div class="scenario-grid">
+                <div class="scenario-card" onclick="selectScenario('premium')">
+                    <div class="scenario-icon">💎</div>
+                    <div class="scenario-title">Premium Customer</div>
+                    <div class="scenario-details">
+                        <div class="scenario-metric">Income: $125K</div>
+                        <div class="scenario-metric">Credit: 785</div>
+                        <div class="scenario-metric">Products: 5</div>
+                    </div>
+                </div>
+                
+                <div class="scenario-card" onclick="selectScenario('standard')">
+                    <div class="scenario-icon">👤</div>
+                    <div class="scenario-title">Standard Customer</div>
+                    <div class="scenario-details">
+                        <div class="scenario-metric">Income: $65K</div>
+                        <div class="scenario-metric">Credit: 720</div>
+                        <div class="scenario-metric">Products: 2</div>
+                    </div>
+                </div>
+                
+                <div class="scenario-card" onclick="selectScenario('emerging')">
+                    <div class="scenario-icon">🌱</div>
+                    <div class="scenario-title">Emerging Customer</div>
+                    <div class="scenario-details">
+                        <div class="scenario-metric">Income: $42K</div>
+                        <div class="scenario-metric">Credit: 680</div>
+                        <div class="scenario-metric">Products: 1</div>
+                    </div>
+                </div>
+                
+                <div class="scenario-card" onclick="selectScenario('high-risk')">
+                    <div class="scenario-icon">⚠️</div>
+                    <div class="scenario-title">High-Risk Customer</div>
+                    <div class="scenario-details">
+                        <div class="scenario-metric">Income: $55K</div>
+                        <div class="scenario-metric">Credit: 640</div>
+                        <div class="scenario-metric">DTI: 45%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="scenario-result" style="margin-top: 20px; text-align: center;"></div>
+        </div>
+
+        <!-- Step 3: Custom Risk Assessment Form -->
+        <div class="test-section">
+            <div class="test-title">📝 Custom Risk Assessment</div>
+            <p style="text-align: center; margin-bottom: 15px; color: rgba(255,255,255,0.9);">
+                Enter your own financial data for real-time SAS analysis
+            </p>
+            
+            <!-- Quick Test Buttons -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button type="button" onclick="loadPreset('low-risk')" style="padding: 8px; background: rgba(76, 175, 80, 0.3); border: 1px solid #4caf50; color: white; border-radius: 8px; font-size: 12px;">
+                    ✅ Load Low Risk
+                </button>
+                <button type="button" onclick="loadPreset('high-risk')" style="padding: 8px; background: rgba(244, 67, 54, 0.3); border: 1px solid #f44336; color: white; border-radius: 8px; font-size: 12px;">
+                    🚨 Load High Risk
+                </button>
+            </div>
+            
+            <form id="assessmentForm" onsubmit="runAssessment(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Annual Income ($)</label>
+                        <input type="number" id="income" value="45000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="age" value="28" min="18" max="80" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Credit Score</label>
+                        <input type="number" id="creditScore" value="620" min="300" max="850" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Loan Amount ($)</label>
+                        <input type="number" id="loanAmount" value="180000" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Debt-to-Income Ratio</label>
+                        <select id="debtRatio" required>
+                            <option value="0.15">15% - Excellent</option>
+                            <option value="0.25">25% - Good</option>
+                            <option value="0.35">35% - Fair</option>
+                            <option value="0.45" selected>45% - High</option>
+                            <option value="0.55">55% - Very High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Employment Years</label>
+                        <input type="number" id="empYears" value="2" min="0" max="50" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Social Media Risk</label>
+                        <select id="socialRisk" required>
+                            <option value="1">1 - Very Low</option>
+                            <option value="2">2 - Low</option>
+                            <option value="3">3 - Medium</option>
+                            <option value="4" selected>4 - High</option>
+                            <option value="5">5 - Very High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Bank Products</label>
+                        <select id="numProducts" required>
+                            <option value="1" selected>1 Product</option>
+                            <option value="2">2 Products</option>
+                            <option value="3">3 Products</option>
+                            <option value="4">4 Products</option>
+                            <option value="5">5+ Products</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Investment Account</label>
+                        <select id="hasInvestment" required>
+                            <option value="false" selected>No Investment Account</option>
+                            <option value="true">Has Investment Account</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="assess-button" id="assessButton">
+                    🎯 Run SAS Risk Assessment
+                </button>
+            </form>
+            
+            <div id="assessment-result" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Banking Analytics Dashboard -->
+        <div class="test-section" style="background: rgba(156, 39, 176, 0.1); border: 1px solid #9c27b0;">
+            <div class="test-title">📊 Banking Analytics Dashboard</div>
+            <p style="text-align: center; margin-bottom: 20px; color: rgba(255,255,255,0.9); font-size: 14px;">
+                Real-time banking intelligence powered by SAS Analytics
+            </p>
+            
+            <!-- Portfolio Overview Cards -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div style="background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(56, 142, 60, 0.1)); 
+                           padding: 15px; border-radius: 10px; border: 1px solid #4caf50; text-align: center;">
+                    <div style="color: #4caf50; font-size: 18px; font-weight: 700;">$2.4B</div>
+                    <div style="color: white; font-size: 11px;">Portfolio Value</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 10px;">+12.5% YoY</div>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(25, 118, 210, 0.1)); 
+                           padding: 15px; border-radius: 10px; border: 1px solid #2196f3; text-align: center;">
+                    <div style="color: #2196f3; font-size: 18px; font-weight: 700;">15,427</div>
+                    <div style="color: white; font-size: 11px;">Active Customers</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 10px;">+8.3% QoQ</div>
+                </div>
+            </div>
+            
+            <!-- Risk Distribution Chart -->
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <div style="color: white; font-weight: 600; margin-bottom: 10px; font-size: 14px;">
+                    📈 Credit Risk Distribution
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                    <div style="text-align: center;">
+                        <div style="background: #4caf50; height: 80px; width: 100%; border-radius: 4px; position: relative; margin-bottom: 5px;">
+                            <div style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); color: white; font-size: 10px; font-weight: 600;">45%</div>
+                        </div>
+                        <div style="color: #4caf50; font-size: 11px; font-weight: 600;">Low Risk</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 9px;">6,942 customers</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="background: #ff9800; height: 60px; width: 100%; border-radius: 4px; position: relative; margin-bottom: 5px;">
+                            <div style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); color: white; font-size: 10px; font-weight: 600;">35%</div>
+                        </div>
+                        <div style="color: #ff9800; font-size: 11px; font-weight: 600;">Medium Risk</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 9px;">5,399 customers</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="background: #f44336; height: 40px; width: 100%; border-radius: 4px; position: relative; margin-bottom: 5px;">
+                            <div style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); color: white; font-size: 10px; font-weight: 600;">20%</div>
+                        </div>
+                        <div style="color: #f44336; font-size: 11px; font-weight: 600;">High Risk</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 9px;">3,086 customers</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alternative Data Performance -->
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <div style="color: white; font-weight: 600; margin-bottom: 10px; font-size: 14px;">
+                    🔍 Alternative Data Impact
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 5px;">
+                        <span style="color: rgba(255,255,255,0.8); font-size: 12px;">Social Media Risk</span>
+                        <span style="color: #4caf50; font-size: 12px; font-weight: 600;">+12% Accuracy</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); height: 6px; border-radius: 3px; overflow: hidden;">
+                        <div style="background: #4caf50; height: 100%; width: 72%; border-radius: 3px;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 5px;">
+                        <span style="color: rgba(255,255,255,0.8); font-size: 12px;">Device Usage Patterns</span>
+                        <span style="color: #2196f3; font-size: 12px; font-weight: 600;">+8% Accuracy</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); height: 6px; border-radius: 3px; overflow: hidden;">
+                        <div style="background: #2196f3; height: 100%; width: 58%; border-radius: 3px;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 5px;">
+                        <span style="color: rgba(255,255,255,0.8); font-size: 12px;">Banking Behavior</span>
+                        <span style="color: #ff9800; font-size: 12px; font-weight: 600;">+15% Accuracy</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); height: 6px; border-radius: 3px; overflow: hidden;">
+                        <div style="background: #ff9800; height: 100%; width: 85%; border-radius: 3px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customer Lifetime Value Analysis -->
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <div style="color: white; font-weight: 600; margin-bottom: 10px; font-size: 14px;">
+                    💎 Customer Lifetime Value Segments
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.3), rgba(233, 30, 99, 0.2)); 
+                               padding: 12px; border-radius: 8px; border: 1px solid #9c27b0;">
+                        <div style="color: #e1bee7; font-size: 16px; font-weight: 700;">$125K</div>
+                        <div style="color: white; font-size: 11px;">Premium Avg CLV</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 9px;">2,847 customers</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(25, 118, 210, 0.2)); 
+                               padding: 12px; border-radius: 8px; border: 1px solid #2196f3;">
+                        <div style="color: #90caf9; font-size: 16px; font-weight: 700;">$67K</div>
+                        <div style="color: white; font-size: 11px;">Standard Avg CLV</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 9px;">8,942 customers</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loan Performance Trend -->
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <div style="color: white; font-weight: 600; margin-bottom: 10px; font-size: 14px;">
+                    📊 Loan Performance Trend (6 months)
+                </div>
+                <div style="height: 80px; position: relative; display: flex; align-items: end; justify-content: space-between; padding: 0 5px;">
+                    <div style="background: linear-gradient(to top, #4caf50, #81c784); width: 12%; height: 45%; border-radius: 2px 2px 0 0;"></div>
+                    <div style="background: linear-gradient(to top, #4caf50, #81c784); width: 12%; height: 38%; border-radius: 2px 2px 0 0;"></div>
+                    <div style="background: linear-gradient(to top, #ff9800, #ffb74d); width: 12%; height: 52%; border-radius: 2px 2px 0 0;"></div>
+                    <div style="background: linear-gradient(to top, #4caf50, #81c784); width: 12%; height: 48%; border-radius: 2px 2px 0 0;"></div>
+                    <div style="background: linear-gradient(to top, #4caf50, #81c784); width: 12%; height: 65%; border-radius: 2px 2px 0 0;"></div>
+                    <div style="background: linear-gradient(to top, #4caf50, #81c784); width: 12%; height: 72%; border-radius: 2px 2px 0 0;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 9px; color: rgba(255,255,255,0.6);">
+                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+                </div>
+                <div style="text-align: center; margin-top: 8px; color: #4caf50; font-size: 11px; font-weight: 600;">
+                    Default Rate: 2.1% (↓0.3% from last quarter)
+                </div>
+            </div>
+            
+            <!-- Real-time Risk Alerts -->
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+                <div style="color: white; font-weight: 600; margin-bottom: 10px; font-size: 14px;">
+                    🚨 Real-time Risk Alerts
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; align-items: center; padding: 8px; background: rgba(244, 67, 54, 0.2); 
+                               border-radius: 6px; border-left: 3px solid #f44336;">
+                        <div style="color: #f44336; margin-right: 8px;">⚠️</div>
+                        <div>
+                            <div style="color: white; font-size: 11px; font-weight: 600;">High DTI Spike Detected</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 9px;">124 customers above 45% DTI threshold</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; padding: 8px; background: rgba(255, 152, 0, 0.2); 
+                               border-radius: 6px; border-left: 3px solid #ff9800;">
+                        <div style="color: #ff9800; margin-right: 8px;">📱</div>
+                        <div>
+                            <div style="color: white; font-size: 11px; font-weight: 600;">Social Media Risk Increase</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 9px;">67 customers moved to higher risk category</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; padding: 8px; background: rgba(76, 175, 80, 0.2); 
+                               border-radius: 6px; border-left: 3px solid #4caf50;">
+                        <div style="color: #4caf50; margin-right: 8px;">✅</div>
+                        <div>
+                            <div style="color: white; font-size: 11px; font-weight: 600;">Model Performance Optimal</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 9px;">AUC: 0.847 | Gini: 0.694</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 15px; text-align: center;">
+                <button onclick="refreshBankingData(event)" 
+                        style="padding: 10px 20px; background: linear-gradient(45deg, #9c27b0, #7b1fa2); color: white; 
+                               border: none; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                    🔄 Refresh Analytics
+                </button>
+            </div>
+        </div>
+
+        <!-- Banking AI Use Case Assessment -->
+        <div class="test-section" style="background: rgba(255, 152, 0, 0.1); border: 1px solid #ff9800;">
+            <div class="test-title">🎯 Banking AI Use Case Assessment</div>
+            <p style="text-align: center; margin-bottom: 20px; color: rgba(255,255,255,0.9); font-size: 14px;">
+                Help us understand your AI banking initiatives and strategic priorities
+            </p>
+            
+            <form id="assessmentBusinessForm" onsubmit="submitBusinessAssessment(event)">
+                <!-- Section 1: Strategic Fit -->
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="color: #ffb74d; font-weight: 600; margin-bottom: 15px; font-size: 15px;">
+                        📋 Section 1: Strategic Fit Assessment
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Use Case Name / Initiative</label>
+                            <input type="text" id="useCaseName" placeholder="e.g., Credit Risk Modeling Enhancement" required>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Department / Business Unit</label>
+                            <select id="department" required>
+                                <option value="">Select Department</option>
+                                <option value="risk-management">Risk Management</option>
+                                <option value="retail-banking">Retail Banking</option>
+                                <option value="commercial-banking">Commercial Banking</option>
+                                <option value="credit-underwriting">Credit Underwriting</option>
+                                <option value="compliance">Compliance & Regulatory</option>
+                                <option value="operations">Operations</option>
+                                <option value="customer-analytics">Customer Analytics</option>
+                                <option value="fraud-prevention">Fraud Prevention</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Current Business Challenge</label>
+                            <textarea id="businessProblem" rows="3" style="width: 100%; padding: 12px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 14px; font-family: inherit; resize: vertical; box-sizing: border-box;" 
+                                    placeholder="What's the challenge/problem you want to solve? How do you solve it today?" required></textarea>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Proposed AI Solution Idea</label>
+                            <textarea id="solutionIdea" rows="3" style="width: 100%; padding: 12px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 14px; font-family: inherit; resize: vertical; box-sizing: border-box;" 
+                                    placeholder="What is your AI/analytics solution idea? How would SAS help?" required></textarea>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Strategic Priority Level</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                <span style="color: rgba(255,255,255,0.7); font-size: 12px;">Low</span>
+                                <div style="display: flex; gap: 15px;">
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="strategicPriority" value="1" required> 1</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="strategicPriority" value="2"> 2</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="strategicPriority" value="3"> 3</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="strategicPriority" value="4"> 4</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="strategicPriority" value="5"> 5</label>
+                                </div>
+                                <span style="color: rgba(255,255,255,0.7); font-size: 12px;">High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 2: Business Impact -->
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="color: #ffb74d; font-weight: 600; margin-bottom: 15px; font-size: 15px;">
+                        💼 Section 2: Business Impact Assessment
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Primary Business Objective</label>
+                            <select id="businessObjective" required>
+                                <option value="">Select Primary Objective</option>
+                                <option value="increase-revenue">Increase Revenue</option>
+                                <option value="reduce-costs">Reduce Operational Costs</option>
+                                <option value="improve-risk-management">Improve Risk Management</option>
+                                <option value="enhance-customer-experience">Enhance Customer Experience</option>
+                                <option value="regulatory-compliance">Regulatory Compliance</option>
+                                <option value="operational-efficiency">Operational Efficiency</option>
+                                <option value="fraud-reduction">Fraud Reduction</option>
+                                <option value="portfolio-optimization">Portfolio Optimization</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Expected Implementation Timeframe</label>
+                            <select id="timeframe" required>
+                                <option value="">Select Timeframe</option>
+                                <option value="1-3-months">1-3 months</option>
+                                <option value="4-6-months">4-6 months</option>
+                                <option value="6-12-months">6-12 months</option>
+                                <option value="12-18-months">12-18 months</option>
+                                <option value="18-months-plus">18+ months</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Estimated Business Impact Value</label>
+                            <select id="businessImpactValue" required>
+                                <option value="">Select Impact Range</option>
+                                <option value="under-500k">Under $500K annually</option>
+                                <option value="500k-2m">$500K - $2M annually</option>
+                                <option value="2m-10m">$2M - $10M annually</option>
+                                <option value="10m-50m">$10M - $50M annually</option>
+                                <option value="over-50m">Over $50M annually</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Key Stakeholder (Decision Maker)</label>
+                            <input type="text" id="keyStakeholder" placeholder="e.g., Chief Risk Officer, Head of Retail Banking" required>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Business Impact Priority</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                <span style="color: rgba(255,255,255,0.7); font-size: 12px;">Low</span>
+                                <div style="display: flex; gap: 15px;">
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="businessImpact" value="1" required> 1</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="businessImpact" value="2"> 2</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="businessImpact" value="3"> 3</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="businessImpact" value="4"> 4</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="businessImpact" value="5"> 5</label>
+                                </div>
+                                <span style="color: rgba(255,255,255,0.7); font-size: 12px;">High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 3: Technical Readiness -->
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="color: #ffb74d; font-weight: 600; margin-bottom: 15px; font-size: 15px;">
+                        🔧 Section 3: Technical Readiness Assessment
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Current Data Availability & Quality</label>
+                            <select id="dataReadiness" required>
+                                <option value="">Select Data Readiness Level</option>
+                                <option value="high-quality-available">High quality data readily available</option>
+                                <option value="some-data-cleanup">Some data available, needs cleanup</option>
+                                <option value="limited-data">Limited data, significant work needed</option>
+                                <option value="minimal-data">Minimal data, major data initiative required</option>
+                                <option value="unknown">Unknown - needs assessment</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Current Analytics/AI Maturity Level</label>
+                            <select id="aiMaturity" required>
+                                <option value="">Select Maturity Level</option>
+                                <option value="advanced">Advanced - Existing ML/AI in production</option>
+                                <option value="intermediate">Intermediate - Some analytics capabilities</option>
+                                <option value="basic">Basic - Traditional reporting only</option>
+                                <option value="starting">Starting - Limited analytics experience</option>
+                                <option value="greenfield">Greenfield - No current capabilities</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Key Technical/Operational Risks</label>
+                            <textarea id="technicalRisks" rows="2" style="width: 100%; padding: 12px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 14px; font-family: inherit; resize: vertical; box-sizing: border-box;" 
+                                    placeholder="e.g., Data governance, Integration complexity, Regulatory requirements"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>SAS Solution Fit</label>
+                            <select id="sasFit" required>
+                                <option value="">How well does SAS fit your needs?</option>
+                                <option value="perfect-fit">Perfect fit - SAS exactly what we need</option>
+                                <option value="good-fit">Good fit - SAS covers most requirements</option>
+                                <option value="partial-fit">Partial fit - SAS covers some needs</option>
+                                <option value="exploring">Exploring - Not sure about fit yet</option>
+                                <option value="comparison">Comparison - Evaluating multiple vendors</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label>Technical Feasibility</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                <span style="color: rgba(255,255,255,0.7); font-size: 12px;">Low</span>
+                                <div style="display: flex; gap: 15px;">
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="technicalFeasibility" value="1" required> 1</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="technicalFeasibility" value="2"> 2</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="technicalFeasibility" value="3"> 3</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="technicalFeasibility" value="4"> 4</label>
+                                    <label style="color: white; font-size: 14px;"><input type="radio" name="technicalFeasibility" value="5"> 5</label>
+                                </div>
+                                <span style="color: rgba(255,255,255,0.7); font-size: 12px;">High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="assess-button" id="businessAssessButton" style="background: linear-gradient(45deg, #ff9800, #f57c00);">
+                    🎯 Submit Banking AI Assessment
+                </button>
+            </form>
+            
+            <div id="business-assessment-result" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="test-section" style="background: rgba(33, 150, 243, 0.1); border: 1px solid #2196f3;">
+            <div class="test-title">📧 Connect with Thakral One</div>
+            <p style="text-align: center; margin-bottom: 20px; color: rgba(255,255,255,0.9); font-size: 14px;">
+                Interested in SAS Banking Intelligence solutions? Get in touch with our team!
+            </p>
+            
+            <form id="contactForm" onsubmit="sendContactEmail(event)">
+                <div style="margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label>Your Name *</label>
+                        <input type="text" id="contactName" required placeholder="John Doe">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" id="contactCompany" placeholder="ABC Bank">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" id="contactEmail" required placeholder="john.doe@company.com">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="contactPhone" placeholder="+1 (555) 123-4567">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label>Interest Area</label>
+                        <select id="contactInterest">
+                            <option value="general">General Inquiry</option>
+                            <option value="banking-solutions">SAS Banking Solutions</option>
+                            <option value="risk-modeling">Credit Risk Modeling</option>
+                            <option value="alternative-data">Alternative Data Integration</option>
+                            <option value="partnership">Partnership Opportunities</option>
+                            <option value="demo-request">Schedule a Demo</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="contactMessage" rows="4" style="width: 100%; padding: 12px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 16px; font-family: inherit; resize: vertical; box-sizing: border-box;" 
+                                placeholder="Tell us about your requirements or how we can help..."></textarea>
+                    </div>
+                </div>
+                
+                <button type="submit" class="assess-button" id="contactButton" style="background: linear-gradient(45deg, #2196f3, #1976d2);">
+                    📧 Send Message to Thakral One
+                </button>
+            </form>
+            
+            <div id="contact-result" style="margin-top: 15px;"></div>
+            
+            <!-- Contact Info -->
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                <div style="color: #4fc3f7; font-weight: 600; margin-bottom: 10px; font-size: 14px;">
+                    🏢 Thakral One - SAS Banking Intelligence
+                </div>
+                <div style="color: white; font-size: 12px; line-height: 1.5;">
+                    <div style="margin-bottom: 5px;">📧 Hussein Srour - Vice President, Data & AI Consulting<br>&nbsp;&nbsp;&nbsp;&nbsp;hussein.srour@thakralone.com</div>
+                    <div style="margin-bottom: 5px;">📧 Bikram Thakral - Chief Executive Officer<br>&nbsp;&nbsp;&nbsp;&nbsp;bikram@thakral.com</div>
+                    <div style="margin-bottom: 5px;">📧 Santie Heydenrych - Deputy Chief Executive Officer<br>&nbsp;&nbsp;&nbsp;&nbsp;santie.heydenrych@thakralone.com</div>
+                    <div style="margin-bottom: 5px;">📧 Annabelle Codrington - Vice President, Business Development (Australia)<br>&nbsp;&nbsp;&nbsp;&nbsp;annabelle.codrington@thakralone.com</div>
+                    <div style="margin-top: 10px; color: rgba(255,255,255,0.7); font-size: 11px;">
+                        Your message will be sent directly to our SAS Banking Intelligence team
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Prevent zoom on input focus (iOS fix)
+        document.addEventListener('touchstart', function() {}, true);
+        
+        // Step 2: Scenario Selection
+        function selectScenario(scenarioType) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            event.target.closest('.scenario-card').classList.add('selected');
+            
+            // Show result
+            const result = document.getElementById('scenario-result');
+            const scenarios = {
+                'premium': {
+                    name: 'Premium Customer',
+                    risk: '0.2%',
+                    rate: '3.5%',
+                    color: '#4caf50'
+                },
+                'standard': {
+                    name: 'Standard Customer', 
+                    risk: '2.5%',
+                    rate: '4.8%',
+                    color: '#2196f3'
+                },
+                'emerging': {
+                    name: 'Emerging Customer',
+                    risk: '8.1%', 
+                    rate: '6.2%',
+                    color: '#ff9800'
+                },
+                'high-risk': {
+                    name: 'High-Risk Customer',
+                    risk: '29.7%',
+                    rate: '9.5%',
+                    color: '#f44336'
+                }
+            };
+            
+            const scenario = scenarios[scenarioType];
+            result.innerHTML = `
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; border: 2px solid ${scenario.color};">
+                    <div style="color: ${scenario.color}; font-weight: 600; margin-bottom: 8px;">
+                        ✅ ${scenario.name} Selected
+                    </div>
+                    <div style="font-size: 14px; color: white;">
+                        Risk Probability: <strong>${scenario.risk}</strong><br>
+                        Risk-Adjusted Rate: <strong>${scenario.rate}</strong>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Quick preset loader for testing
+        function loadPreset(type) {
+            if (type === 'low-risk') {
+                document.getElementById('income').value = '125000';
+                document.getElementById('age').value = '42';
+                document.getElementById('creditScore').value = '785';
+                document.getElementById('loanAmount').value = '200000';
+                document.getElementById('debtRatio').value = '0.15';
+                document.getElementById('empYears').value = '15';
+                document.getElementById('socialRisk').value = '1';
+                document.getElementById('numProducts').value = '5';
+                document.getElementById('hasInvestment').value = 'true';
+            } else if (type === 'high-risk') {
+                document.getElementById('income').value = '35000';
+                document.getElementById('age').value = '24';
+                document.getElementById('creditScore').value = '580';
+                document.getElementById('loanAmount').value = '250000';
+                document.getElementById('debtRatio').value = '0.55';
+                document.getElementById('empYears').value = '1';
+                document.getElementById('socialRisk').value = '5';
+                document.getElementById('numProducts').value = '1';
+                document.getElementById('hasInvestment').value = 'false';
+            }
+        }
+        
+        // Step 3: Real Risk Assessment with API
+        async function runAssessment(event) {
+            event.preventDefault();
+            
+            const button = document.getElementById('assessButton');
+            const result = document.getElementById('assessment-result');
+            
+            // Show loading
+            button.innerHTML = '⏳ Processing...';
+            button.disabled = true;
+            
+            result.innerHTML = `
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 20px; margin-bottom: 10px;">🔄</div>
+                    <div style="color: white; font-weight: 600;">Running SAS Banking Intelligence...</div>
+                    <div style="color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 5px;">Analyzing your financial profile</div>
+                </div>
+            `;
+            
+            try {
+                // Get form data with proper validation and realistic derived values
+                const income = parseInt(document.getElementById('income').value);
+                const age = parseInt(document.getElementById('age').value);
+                const loanAmount = parseInt(document.getElementById('loanAmount').value);
+                const creditScore = parseInt(document.getElementById('creditScore').value);
+                const debtRatio = parseFloat(document.getElementById('debtRatio').value);
+                const empYears = parseInt(document.getElementById('empYears').value);
+                const socialRisk = parseInt(document.getElementById('socialRisk').value);
+                const numProducts = parseInt(document.getElementById('numProducts').value);
+                const hasInvestment = document.getElementById('hasInvestment').value === 'true';
+                
+                const formData = {
+                    Income: income,
+                    Age: age,
+                    LoanAmount: loanAmount,
+                    CreditScore: creditScore,
+                    DebtToIncome: debtRatio,
+                    EmploymentYears: empYears,
+                    LoanTerm: 30,
+                    SocialMediaRiskScore: socialRisk,
+                    DeviceUsageScore: Math.max(10, Math.min(95, 80 - (socialRisk * 12))),
+                    NumberOfProducts: numProducts,
+                    HasInvestmentAccount: hasInvestment,
+                    AccountTenure: Math.max(1, Math.min(240, empYears * 18 + Math.floor(Math.random() * 24))),
+                    LatePayments: Math.max(0, Math.floor(debtRatio * 12) + (socialRisk > 3 ? Math.floor(Math.random() * 3) : 0)),
+                    OverdraftEvents: Math.max(0, (socialRisk - 1) + Math.floor(debtRatio * 8) + (creditScore < 650 ? Math.floor(Math.random() * 4) : 0))
+                };
+                
+                console.log('Sending assessment data:', formData);
+                
+                // Call real API with timeout and better error handling
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                
+                const response = await fetch('/assess/comprehensive', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const assessment = await response.json();
+                console.log('Assessment result:', assessment);
+                
+                // Display results
+                displayAssessmentResult(assessment);
+                
+            } catch (error) {
+                console.error('Assessment failed:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    name: error.name,
+                    stack: error.stack
+                });
+                
+                // Calculate a realistic fallback result based on the form data
+                const income = parseInt(document.getElementById('income').value) || 75000;
+                const creditScore = parseInt(document.getElementById('creditScore').value) || 720;
+                const debtRatio = parseFloat(document.getElementById('debtRatio').value) || 0.35;
+                const socialRisk = parseInt(document.getElementById('socialRisk').value) || 2;
+                
+                // Simple risk calculation for fallback
+                let riskProb = 0.05; // Base 5%
+                if (creditScore < 650) riskProb += 0.15;
+                if (debtRatio > 0.4) riskProb += 0.10;
+                if (socialRisk > 3) riskProb += 0.08;
+                if (income < 50000) riskProb += 0.05;
+                
+                const riskPercent = (riskProb * 100).toFixed(1);
+                const rate = (4.5 + riskProb * 8).toFixed(1);
+                
+                // Show calculated fallback result
+                result.innerHTML = `
+                    <div style="background: rgba(33, 150, 243, 0.2); border: 2px solid #2196f3; padding: 20px; border-radius: 10px;">
+                        <div style="color: #2196f3; font-weight: 600; margin-bottom: 10px;">
+                            🔄 Calculated Assessment (Local Mode)
+                        </div>
+                        <div style="color: white; font-size: 14px; margin-bottom: 15px;">
+                            Based on your input data - Credit: ${creditScore}, Income: $${income.toLocaleString()}
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="color: #4caf50; font-size: 18px; font-weight: 600; margin-bottom: 10px;">
+                                ${riskProb < 0.15 ? '✅ Low Risk' : riskProb < 0.3 ? '⚠️ Medium Risk' : '🚨 High Risk'}
+                            </div>
+                            <div style="color: white; margin: 10px 0;">
+                                <strong>Risk Probability:</strong> ${riskPercent}%<br>
+                                <strong>Risk-Adjusted Rate:</strong> ${rate}%<br>
+                                <strong>Customer Segment:</strong> ${income > 100000 ? 'Premium' : income > 60000 ? 'Standard' : 'Emerging'}
+                            </div>
+                        </div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 10px; text-align: center;">
+                            Error: ${error.message}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Reset button
+            button.innerHTML = '🎯 Run SAS Risk Assessment';
+            button.disabled = false;
+        }
+        
+        function displayAssessmentResult(assessment) {
+            const result = document.getElementById('assessment-result');
+            const riskPercent = (assessment.risk_probability * 100).toFixed(1);
+            const riskColor = assessment.risk_level === 'low_risk' ? '#4caf50' : 
+                             assessment.risk_level === 'medium_risk' ? '#ff9800' : '#f44336';
+            const riskIcon = assessment.risk_level === 'low_risk' ? '✅' : 
+                            assessment.risk_level === 'medium_risk' ? '⚠️' : '🚨';
+            
+            // Enhanced visual feedback with animations and better UX
+            result.innerHTML = `
+                <div style="background: rgba(255,255,255,0.1); border: 2px solid ${riskColor}; padding: 20px; border-radius: 15px; 
+                           box-shadow: 0 4px 20px rgba(0,0,0,0.3); animation: slideInUp 0.5s ease-out;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="color: ${riskColor} !important; font-size: 24px; font-weight: 700; margin-bottom: 8px;">
+                            ${riskIcon} ${assessment.risk_level.replace('_', ' ').toUpperCase()}
+                        </div>
+                        <div style="color: rgba(255,255,255,0.8); font-size: 12px;">
+                            SAS Banking Intelligence Assessment
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div style="background: linear-gradient(135deg, rgba(${riskColor === '#4caf50' ? '76,175,80' : riskColor === '#ff9800' ? '255,152,0' : '244,67,54'},0.2), rgba(255,255,255,0.1)); 
+                                   padding: 18px; border-radius: 12px; text-align: center; border: 1px solid ${riskColor};">
+                            <div style="color: ${riskColor} !important; font-size: 22px; font-weight: 700;">${riskPercent}%</div>
+                            <div style="color: white; font-size: 11px; font-weight: 500;">Default Risk</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(33,150,243,0.2), rgba(255,255,255,0.1)); 
+                                   padding: 18px; border-radius: 12px; text-align: center; border: 1px solid #2196f3;">
+                            <div style="color: #2196f3; font-size: 22px; font-weight: 700;">${assessment.risk_adjusted_pricing}%</div>
+                            <div style="color: white; font-size: 11px; font-weight: 500;">Interest Rate</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; color: white; font-size: 13px;">
+                            <div><span style="color: rgba(255,255,255,0.7);">Credit Score:</span> <strong>${assessment.traditional_score}</strong></div>
+                            <div><span style="color: rgba(255,255,255,0.7);">Segment:</span> <strong>${assessment.customer_segment.charAt(0).toUpperCase() + assessment.customer_segment.slice(1)}</strong></div>
+                            <div style="grid-column: 1 / -1;"><span style="color: rgba(255,255,255,0.7);">Lifetime Value:</span> <strong>$${assessment.lifetime_value_estimate.toLocaleString()}</strong></div>
+                        </div>
+                    </div>
+                    
+                    ${assessment.upsell_products && assessment.upsell_products.length > 0 ? `
+                    <div style="background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(76, 175, 80, 0.1)); 
+                               padding: 12px; border-radius: 10px; border: 1px solid rgba(33, 150, 243, 0.4);">
+                        <div style="color: #4fc3f7; font-weight: 600; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center;">
+                            💡 Recommended Products
+                        </div>
+                        <div style="color: white; font-size: 12px; line-height: 1.4;">
+                            ${assessment.upsell_products.slice(0, 2).map(product => 
+                                `<span style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; margin-right: 6px; display: inline-block; margin-bottom: 4px;">${product}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    ${assessment.investment_readiness_score > 0.7 ? `
+                    <div style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(233, 30, 99, 0.1)); 
+                               padding: 12px; border-radius: 10px; border: 1px solid rgba(156, 39, 176, 0.4); margin-top: 10px;">
+                        <div style="color: #e1bee7; font-weight: 600; margin-bottom: 5px; font-size: 13px;">
+                            ⭐ Investment Ready Score: ${Math.round(assessment.investment_readiness_score * 100)}%
+                        </div>
+                        <div style="color: white; font-size: 11px;">Eligible for premium investment products</div>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <style>
+                    @keyframes slideInUp {
+                        from {
+                            transform: translateY(20px);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateY(0);
+                            opacity: 1;
+                        }
+                    }
+                </style>
+            `;
+        }
+        
+        // Contact Form Handler
+        async function sendContactEmail(event) {
+            event.preventDefault();
+            
+            const button = document.getElementById('contactButton');
+            const result = document.getElementById('contact-result');
+            
+            // Get form data
+            const formData = {
+                name: document.getElementById('contactName').value,
+                company: document.getElementById('contactCompany').value || 'Not specified',
+                email: document.getElementById('contactEmail').value,
+                phone: document.getElementById('contactPhone').value || 'Not specified',
+                interest: document.getElementById('contactInterest').value,
+                message: document.getElementById('contactMessage').value || 'No additional message'
+            };
+            
+            // Show loading state
+            button.innerHTML = '📧 Sending Message...';
+            button.disabled = true;
+            
+            result.innerHTML = `
+                <div style="background: rgba(33, 150, 243, 0.2); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #2196f3;">
+                    <div style="color: #2196f3; font-weight: 600; margin-bottom: 5px;">📤 Sending your message...</div>
+                    <div style="color: white; font-size: 12px;">Connecting with Thakral One team</div>
+                </div>
+            `;
+            
+            try {
+                // Send to contact API endpoint
+                const response = await fetch('/contact/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    
+                    // Success message
+                    result.innerHTML = `
+                        <div style="background: rgba(76, 175, 80, 0.2); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #4caf50;">
+                            <div style="color: #4caf50; font-weight: 600; margin-bottom: 8px; font-size: 14px;">✅ Message Sent Successfully!</div>
+                            <div style="color: white; font-size: 12px; line-height: 1.4;">
+                                Your inquiry has been sent to:<br>
+                                • Hussein Srour - VP, Data & AI Consulting (hussein.srour@thakralone.com)<br>
+                                • Bikram Thakral - CEO (bikram@thakral.com)<br>
+                                • Santie Heydenrych - Deputy CEO (santie.heydenrych@thakralone.com)<br>
+                                • Annabelle Codrington - VP, Business Development (annabelle.codrington@thakralone.com)<br>
+                                <br>
+                                <strong>We'll get back to you within 24 hours!</strong>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Clear form
+                    document.getElementById('contactForm').reset();
+                    
+                } else {
+                    throw new Error('Failed to send message');
+                }
+                
+            } catch (error) {
+                console.error('Contact form error:', error);
+                
+                // Fallback: Use mailto links for direct email
+                const interestLabels = {
+                    'general': 'General Inquiry',
+                    'banking-solutions': 'SAS Banking Solutions',
+                    'risk-modeling': 'Credit Risk Modeling',
+                    'alternative-data': 'Alternative Data Integration',
+                    'partnership': 'Partnership Opportunities',
+                    'demo-request': 'Schedule a Demo'
+                };
+                
+                const subject = encodeURIComponent(`SAS Event Inquiry - ${interestLabels[formData.interest]}`);
+                const body = encodeURIComponent(`
+Hello Thakral One Team,
+
+I'm interested in learning more about your SAS Banking Intelligence solutions.
+
+Contact Details:
+- Name: ${formData.name}
+- Company: ${formData.company}
+- Email: ${formData.email}
+- Phone: ${formData.phone}
+- Interest Area: ${interestLabels[formData.interest]}
+
+Message:
+${formData.message}
+
+Best regards,
+${formData.name}
+                `);
+                
+                const mailtoLinks = [
+                    `mailto:hussein.srour@thakralone.com?subject=${subject}&body=${body}`,
+                    `mailto:bikram@thakral.com?subject=${subject}&body=${body}`,
+                    `mailto:santie.heydenrych@thakralone.com?subject=${subject}&body=${body}`,
+                    `mailto:annabelle.codrington@thakralone.com?subject=${subject}&body=${body}`
+                ];
+                
+                result.innerHTML = `
+                    <div style="background: rgba(255, 152, 0, 0.2); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #ff9800;">
+                        <div style="color: #ff9800; font-weight: 600; margin-bottom: 10px;">📧 Direct Email Options</div>
+                        <div style="color: white; font-size: 12px; margin-bottom: 12px;">
+                            Click any email below to send your message directly:
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <a href="${mailtoLinks[0]}" style="color: #4fc3f7; text-decoration: none; font-size: 11px; padding: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; line-height: 1.3;">
+                                📧 Hussein Srour<br><span style="opacity: 0.8;">VP, Data & AI Consulting</span><br>hussein.srour@thakralone.com
+                            </a>
+                            <a href="${mailtoLinks[1]}" style="color: #4fc3f7; text-decoration: none; font-size: 11px; padding: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; line-height: 1.3;">
+                                📧 Bikram Thakral<br><span style="opacity: 0.8;">Chief Executive Officer</span><br>bikram@thakral.com
+                            </a>
+                            <a href="${mailtoLinks[2]}" style="color: #4fc3f7; text-decoration: none; font-size: 11px; padding: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; line-height: 1.3;">
+                                📧 Santie Heydenrych<br><span style="opacity: 0.8;">Deputy Chief Executive Officer</span><br>santie.heydenrych@thakralone.com
+                            </a>
+                            <a href="${mailtoLinks[3]}" style="color: #4fc3f7; text-decoration: none; font-size: 11px; padding: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; line-height: 1.3;">
+                                📧 Annabelle Codrington<br><span style="opacity: 0.8;">VP, Business Development (Australia)</span><br>annabelle.codrington@thakralone.com
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Reset button
+            button.innerHTML = '📧 Send Message to Thakral One';
+            button.disabled = false;
+        }
+        
+        // Banking Analytics Refresh Function
+        function refreshBankingData(event) {
+            const button = event ? event.target : document.querySelector('[onclick="refreshBankingData()"]');
+            button.innerHTML = '🔄 Refreshing...';
+            button.disabled = true;
+            
+            // Simulate data refresh with animation
+            setTimeout(() => {
+                try {
+                    // Add refresh animations to various elements
+                    const portfolioCards = document.querySelectorAll('[style*="Portfolio Value"], [style*="Active Customers"]');
+                    portfolioCards.forEach(card => {
+                        const parent = card.closest('[style*="background: linear-gradient"]');
+                        if (parent) {
+                            parent.style.animation = 'refreshPulse 0.5s ease-in-out';
+                        }
+                    });
+                    
+                    // Update portfolio value with realistic variations
+                    const portfolioValueElement = document.querySelector('[style*="Portfolio Value"]');
+                    if (portfolioValueElement) {
+                        const valueElement = portfolioValueElement.previousElementSibling;
+                        if (valueElement) {
+                            const currentValue = parseFloat(valueElement.textContent.replace('$', '').replace('B', ''));
+                            const newValue = (currentValue + (Math.random() - 0.5) * 0.1).toFixed(1);
+                            valueElement.textContent = `$${newValue}B`;
+                        }
+                    }
+                    
+                    // Update customer count with realistic variations
+                    const customerCountElement = document.querySelector('[style*="Active Customers"]');
+                    if (customerCountElement) {
+                        const countElement = customerCountElement.previousElementSibling;
+                        if (countElement) {
+                            const currentCount = parseInt(countElement.textContent.replace(',', ''));
+                            const newCount = (currentCount + Math.floor((Math.random() - 0.5) * 100)).toLocaleString();
+                            countElement.textContent = newCount;
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.log('Analytics refresh completed with minor issues:', error);
+                }
+                
+                // Always reset button regardless of any errors
+                button.innerHTML = '🔄 Refresh Analytics';
+                button.disabled = false;
+            }, 1200);
+        }
+        
+        // Business Assessment Form Handler
+        async function submitBusinessAssessment(event) {
+            event.preventDefault();
+            
+            const button = document.getElementById('businessAssessButton');
+            const result = document.getElementById('business-assessment-result');
+            
+            // Get all form data
+            const formData = {
+                // Section 1: Strategic Fit
+                useCaseName: document.getElementById('useCaseName').value,
+                department: document.getElementById('department').value,
+                businessProblem: document.getElementById('businessProblem').value,
+                solutionIdea: document.getElementById('solutionIdea').value,
+                strategicPriority: document.querySelector('input[name="strategicPriority"]:checked')?.value,
+                
+                // Section 2: Business Impact
+                businessObjective: document.getElementById('businessObjective').value,
+                timeframe: document.getElementById('timeframe').value,
+                businessImpactValue: document.getElementById('businessImpactValue').value,
+                keyStakeholder: document.getElementById('keyStakeholder').value,
+                businessImpact: document.querySelector('input[name="businessImpact"]:checked')?.value,
+                
+                // Section 3: Technical Readiness
+                dataReadiness: document.getElementById('dataReadiness').value,
+                aiMaturity: document.getElementById('aiMaturity').value,
+                technicalRisks: document.getElementById('technicalRisks').value || 'Not specified',
+                sasFit: document.getElementById('sasFit').value,
+                technicalFeasibility: document.querySelector('input[name="technicalFeasibility"]:checked')?.value
+            };
+            
+            // Show loading state
+            button.innerHTML = '🎯 Submitting Assessment...';
+            button.disabled = true;
+            
+            result.innerHTML = `
+                <div style="background: rgba(255, 152, 0, 0.2); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #ff9800;">
+                    <div style="color: #ff9800; font-weight: 600; margin-bottom: 5px;">📤 Processing your business assessment...</div>
+                    <div style="color: white; font-size: 12px;">Analyzing your AI banking use case</div>
+                </div>
+            `;
+            
+            try {
+                // Send to business assessment API endpoint
+                const response = await fetch('/assessment/business', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    
+                    // Calculate assessment score
+                    const avgPriority = (parseInt(formData.strategicPriority) + parseInt(formData.businessImpact) + parseInt(formData.technicalFeasibility)) / 3;
+                    const scoreColor = avgPriority >= 4 ? '#4caf50' : avgPriority >= 3 ? '#ff9800' : '#f44336';
+                    const scoreText = avgPriority >= 4 ? 'High Priority' : avgPriority >= 3 ? 'Medium Priority' : 'Needs Development';
+                    
+                    // Success message with assessment insights
+                    result.innerHTML = `
+                        <div style="background: rgba(76, 175, 80, 0.2); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #4caf50;">
+                            <div style="color: #4caf50; font-weight: 600; margin-bottom: 8px; font-size: 14px;">✅ Assessment Submitted Successfully!</div>
+                            <div style="color: white; font-size: 12px; line-height: 1.4; margin-bottom: 15px;">
+                                Your banking AI use case has been sent to the Thakral One team
+                            </div>
+                            
+                            <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+                                <div style="color: ${scoreColor}; font-weight: 600; margin-bottom: 5px;">${scoreText} Use Case</div>
+                                <div style="color: white; font-size: 11px;">
+                                    <strong>Use Case:</strong> ${formData.useCaseName}<br>
+                                    <strong>Department:</strong> ${formData.department.replace('-', ' ').toUpperCase()}<br>
+                                    <strong>Business Value:</strong> ${formData.businessImpactValue.replace('-', ' ').toUpperCase()}
+                                </div>
+                            </div>
+                            
+                            <div style="color: white; font-size: 11px;">
+                                <strong>Next Steps:</strong><br>
+                                • Thakral One team will review within 24 hours<br>
+                                • Expect a strategic consultation call<br>
+                                • SAS solution architecture proposal
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Clear form
+                    document.getElementById('assessmentBusinessForm').reset();
+                    
+                } else {
+                    throw new Error('Failed to submit assessment');
+                }
+                
+            } catch (error) {
+                console.error('Business assessment error:', error);
+                
+                // Fallback: Use mailto for direct email with assessment data
+                const subject = encodeURIComponent(`SAS Event - Banking AI Use Case Assessment: ${formData.useCaseName}`);
+                const body = encodeURIComponent(`
+Banking AI Use Case Assessment from SAS Event Demo
+
+==== STRATEGIC FIT ASSESSMENT ====
+Use Case Name: ${formData.useCaseName}
+Department: ${formData.department}
+Strategic Priority: ${formData.strategicPriority}/5
+
+Business Problem:
+${formData.businessProblem}
+
+Proposed Solution:
+${formData.solutionIdea}
+
+==== BUSINESS IMPACT ASSESSMENT ====
+Primary Objective: ${formData.businessObjective}
+Expected Timeframe: ${formData.timeframe}
+Business Impact Value: ${formData.businessImpactValue}
+Key Stakeholder: ${formData.keyStakeholder}
+Business Impact Priority: ${formData.businessImpact}/5
+
+==== TECHNICAL READINESS ASSESSMENT ====
+Data Readiness: ${formData.dataReadiness}
+AI Maturity: ${formData.aiMaturity}
+Technical Risks: ${formData.technicalRisks}
+SAS Fit Assessment: ${formData.sasFit}
+Technical Feasibility: ${formData.technicalFeasibility}/5
+
+Generated from: SAS Banking Intelligence Mobile Demo
+Timestamp: ${new Date().toISOString()}
+                `);
+                
+                const mailtoLinks = [
+                    `mailto:hussein.srour@thakralone.com?subject=${subject}&body=${body}`,
+                    `mailto:bikram@thakral.com?subject=${subject}&body=${body}`,
+                    `mailto:santie.heydenrych@thakralone.com?subject=${subject}&body=${body}`,
+                    `mailto:annabelle.codrington@thakralone.com?subject=${subject}&body=${body}`
+                ];
+                
+                result.innerHTML = `
+                    <div style="background: rgba(255, 152, 0, 0.2); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #ff9800;">
+                        <div style="color: #ff9800; font-weight: 600; margin-bottom: 10px;">📧 Direct Assessment Submission</div>
+                        <div style="color: white; font-size: 12px; margin-bottom: 12px;">
+                            Click any email below to send your business assessment:
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <a href="${mailtoLinks[0]}" style="color: #4fc3f7; text-decoration: none; font-size: 11px; padding: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; line-height: 1.3;">
+                                📧 Hussein Srour<br><span style="opacity: 0.8;">VP, Data & AI Consulting</span><br>hussein.srour@thakralone.com
+                            </a>
+                            <a href="${mailtoLinks[1]}" style="color: #4fc3f7; text-decoration: none; font-size: 11px; padding: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; line-height: 1.3;">
+                                📧 Bikram Thakral<br><span style="opacity: 0.8;">Chief Executive Officer</span><br>bikram@thakral.com
+                            </a>
+                            <a href="${mailtoLinks[2]}" style="color: #4fc3f7; text-decoration: none; font-size: 11px; padding: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; line-height: 1.3;">
+                                📧 Santie Heydenrych<br><span style="opacity: 0.8;">Deputy Chief Executive Officer</span><br>santie.heydenrych@thakralone.com
+                            </a>
+                            <a href="${mailtoLinks[3]}" style="color: #4fc3f7; text-decoration: none; font-size: 11px; padding: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; line-height: 1.3;">
+                                📧 Annabelle Codrington<br><span style="opacity: 0.8;">VP, Business Development (Australia)</span><br>annabelle.codrington@thakralone.com
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Reset button
+            button.innerHTML = '🎯 Submit Banking AI Assessment';
+            button.disabled = false;
+        }
+        
+        // Add CSS for refresh animation
+        const refreshStyle = document.createElement('style');
+        refreshStyle.textContent = `
+            @keyframes refreshPulse {
+                0% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.02); opacity: 0.8; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(refreshStyle);
+        
+        // Test viewport settings
+        console.log('Viewport width:', window.innerWidth);
+        console.log('Viewport height:', window.innerHeight);
+        console.log('Device pixel ratio:', window.devicePixelRatio);
+    </script>
+</body>
+</html>

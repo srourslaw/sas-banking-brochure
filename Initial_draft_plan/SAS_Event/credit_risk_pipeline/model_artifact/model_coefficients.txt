@@ -1,0 +1,8 @@
+Intercept,8.5
+Income,-0.000015
+Age,-0.02
+LoanAmount,0.000003
+CreditScore,-0.012
+DebtToIncome,6.5
+EmploymentYears,-0.08
+LoanTerm,0.01

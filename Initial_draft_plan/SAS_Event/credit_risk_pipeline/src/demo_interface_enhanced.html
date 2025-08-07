@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakral One - Credit Risk Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 3s ease infinite;
+            margin-bottom: 8px;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .demo-badge {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px 25px;
+            color: #333;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quick-test {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .quick-btn {
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border: 2px solid #dee2e6;
+            padding: 10px 16px;
+            border-radius: 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .quick-btn:hover {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(102, 126, 234, 0.1);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Results Section */
+        .result {
+            margin-top: 30px;
+            display: none;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-header {
+            text-align: center;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.1;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+        }
+        
+        .result-header.low-risk {
+            background: linear-gradient(135deg, #d4edda, #a3d977);
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .result-header.high-risk {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 2px solid #f1b0b7;
+        }
+        
+        .result-icon {
+            font-size: 50px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .result-text {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .result-probability {
+            font-size: 18px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        /* Risk Gauge */
+        .risk-gauge {
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 200px;
+            height: 100px;
+            margin: 0 auto 15px;
+        }
+
+        .gauge-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Analytics Dashboard */
+        .analytics-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            border: 1px solid #dee2e6;
+        }
+
+        .analytics-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #495057;
+            text-align: center;
+        }
+
+        .chart-container {
+            margin: 20px 0;
+            height: 200px;
+            position: relative;
+        }
+
+        .feature-importance {
+            margin-top: 20px;
+        }
+
+        .feature-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .feature-name {
+            width: 140px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .feature-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 0 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+            position: relative;
+        }
+
+        .feature-bar-fill.positive {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .feature-bar-fill.negative {
+            background: linear-gradient(90deg, #dc3545, #e83e8c);
+        }
+
+        .feature-value {
+            font-size: 11px;
+            font-weight: 600;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .comparison-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .comparison-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .footer-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .responsive-hide {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .responsive-hide {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">THAKRAL ONE</div>
+            <div class="subtitle">AI-Powered Credit Risk Analytics</div>
+            <span class="demo-badge">LIVE DEMO - SAS EVENT</span>
+        </div>
+        
+        <div class="main-content">
+            <h2 class="section-title">🎯 Credit Risk Assessment</h2>
+            
+            <form id="creditForm">
+                <div class="form-group">
+                    <label for="income">💰 Annual Income ($)</label>
+                    <input type="number" id="income" placeholder="75000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">👤 Age</label>
+                    <input type="number" id="age" placeholder="35" min="18" max="80" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loanAmount">🏠 Loan Amount ($)</label>
+                    <input type="number" id="loanAmount" placeholder="200000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="creditScore">📊 Credit Score (300-850)</label>
+                    <input type="number" id="creditScore" placeholder="750" min="300" max="850" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="debtToIncome">📈 Debt-to-Income Ratio (0.0-1.0)</label>
+                    <input type="number" id="debtToIncome" placeholder="0.25" step="0.01" min="0" max="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="employmentYears">💼 Employment Years</label>
+                    <input type="number" id="employmentYears" placeholder="8" min="0" max="50" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loanTerm">📅 Loan Term (Years)</label>
+                    <input type="number" id="loanTerm" placeholder="30" required>
+                </div>
+                
+                <button type="submit" class="btn" id="submitBtn">
+                    🚀 Analyze Credit Risk
+                </button>
+            </form>
+            
+            <div class="quick-test">
+                <p style="font-size: 14px; color: #666; margin-bottom: 12px; font-weight: 500;">⚡ Quick Demo:</p>
+                <span class="quick-btn" onclick="fillLowRisk()">✅ Excellent Customer</span>
+                <span class="quick-btn" onclick="fillHighRisk()">⚠️ High Risk Profile</span>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="color: #667eea; font-weight: 500;">🧠 AI Model Processing...</p>
+            </div>
+            
+            <div class="result" id="result">
+                <div class="result-header" id="resultHeader">
+                    <div class="result-icon" id="resultIcon"></div>
+                    <div class="result-text" id="resultText"></div>
+                    <div class="result-probability" id="resultProbability"></div>
+                </div>
+
+                <!-- Risk Gauge -->
+                <div class="risk-gauge">
+                    <div class="gauge-container">
+                        <canvas class="gauge-canvas" id="riskGauge"></canvas>
+                    </div>
+                    <div style="font-size: 12px; color: #6c757d; font-weight: 500;">Risk Probability Meter</div>
+                </div>
+
+                <!-- Analytics Dashboard -->
+                <div class="analytics-section">
+                    <div class="analytics-title">📊 Risk Analysis Dashboard</div>
+                    
+                    <!-- Risk Distribution Chart -->
+                    <div class="chart-container">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+
+                    <!-- Feature Importance -->
+                    <div class="feature-importance">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #495057;">
+                            🎯 Key Risk Factors
+                        </div>
+                        <div id="featureImportance"></div>
+                    </div>
+
+                    <!-- Comparison Stats -->
+                    <div class="comparison-section">
+                        <div class="comparison-title">📈 Portfolio Benchmarks</div>
+                        <div class="comparison-stats" id="comparisonStats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="portfolioAvg">--</div>
+                                <div class="stat-label">Portfolio Average</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="industryBench">--</div>
+                                <div class="stat-label">Industry Benchmark</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-title">Powered by Thakral One</div>
+            <div>SAS Model Studio → DevOps Pipeline → Production API</div>
+            <div style="margin-top: 8px; font-size: 11px;">
+                🚀 From model development to business value in minutes, not months
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get API base URL
+        const API_BASE = window.location.origin;
+        let currentPrediction = null;
+        
+        document.getElementById('creditForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            
+            // Collect form data
+            const formData = {
+                Income: parseFloat(document.getElementById('income').value),
+                Age: parseInt(document.getElementById('age').value),
+                LoanAmount: parseFloat(document.getElementById('loanAmount').value),
+                CreditScore: parseInt(document.getElementById('creditScore').value),
+                DebtToIncome: parseFloat(document.getElementById('debtToIncome').value),
+                EmploymentYears: parseInt(document.getElementById('employmentYears').value),
+                LoanTerm: parseInt(document.getElementById('loanTerm').value)
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                currentPrediction = data;
+                displayResult(data, formData);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Unable to process request. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+        
+        function displayResult(data, inputData) {
+            const result = document.getElementById('result');
+            const resultHeader = document.getElementById('resultHeader');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultText = document.getElementById('resultText');
+            const resultProbability = document.getElementById('resultProbability');
+            
+            const probability = data.risk_probability || data.probability || 0;
+            const isHighRisk = probability > 0.5;
+            
+            // Update result header
+            resultHeader.className = `result-header ${isHighRisk ? 'high-risk' : 'low-risk'}`;
+            resultIcon.textContent = isHighRisk ? '⚠️' : '✅';
+            resultText.textContent = isHighRisk ? 'High Risk' : 'Low Risk';
+            resultProbability.textContent = `Risk Probability: ${(probability * 100).toFixed(1)}%`;
+            
+            // Create risk gauge
+            createRiskGauge(probability);
+            
+            // Create risk distribution chart
+            createRiskChart(probability, isHighRisk);
+            
+            // Display feature importance
+            displayFeatureImportance(inputData, probability);
+            
+            // Update comparison stats
+            updateComparisonStats(probability);
+            
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createRiskGauge(probability) {
+            const canvas = document.getElementById('riskGauge');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = 200;
+            canvas.height = 100;
+            
+            const centerX = 100;
+            const centerY = 90;
+            const radius = 70;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw gauge background
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, Math.PI, 0);
+            ctx.lineWidth = 12;
+            ctx.strokeStyle = '#e9ecef';
+            ctx.stroke();
+            
+            // Draw risk level arc
+            const angle = Math.PI * probability;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, Math.PI, Math.PI + angle);
+            ctx.lineWidth = 12;
+            ctx.strokeStyle = probability > 0.7 ? '#dc3545' : 
+                             probability > 0.4 ? '#ffc107' : '#28a745';
+            ctx.stroke();
+            
+            // Draw needle
+            const needleAngle = Math.PI + (Math.PI * probability);
+            const needleLength = radius - 20;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(
+                centerX + Math.cos(needleAngle) * needleLength,
+                centerY + Math.sin(needleAngle) * needleLength
+            );
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#495057';
+            ctx.stroke();
+            
+            // Draw center circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#495057';
+            ctx.fill();
+        }
+
+        function createRiskChart(probability, isHighRisk) {
+            const canvas = document.getElementById('riskChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.riskChartInstance) {
+                window.riskChartInstance.destroy();
+            }
+            
+            // Create risk distribution data
+            const riskData = generateRiskDistribution(probability);
+            
+            window.riskChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', '50-60%', '60-70%', '70-80%', '80-90%', '90-100%'],
+                    datasets: [{
+                        label: 'Population Distribution',
+                        data: riskData.population,
+                        backgroundColor: 'rgba(108, 117, 125, 0.6)',
+                        borderColor: 'rgba(108, 117, 125, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Your Score',
+                        data: riskData.userScore,
+                        backgroundColor: isHighRisk ? 'rgba(220, 53, 69, 0.8)' : 'rgba(40, 167, 69, 0.8)',
+                        borderColor: isHighRisk ? 'rgba(220, 53, 69, 1)' : 'rgba(40, 167, 69, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: { size: 11 }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: { size: 10 }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { size: 9 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateRiskDistribution(userProbability) {
+            // Simulate normal population distribution
+            const population = [8, 15, 22, 20, 15, 10, 6, 3, 1, 0.5];
+            
+            // Find user's bucket
+            const userBucket = Math.floor(userProbability * 10);
+            const userScore = new Array(10).fill(0);
+            userScore[Math.min(userBucket, 9)] = 25; // Highlight user's position
+            
+            return { population, userScore };
+        }
+
+        function displayFeatureImportance(inputData, probability) {
+            const container = document.getElementById('featureImportance');
+            
+            // Calculate feature impacts
+            const features = [
+                { name: 'Credit Score', value: inputData.CreditScore, impact: (850 - inputData.CreditScore) / 550 * 100, type: 'negative' },
+                { name: 'Debt-to-Income', value: inputData.DebtToIncome, impact: inputData.DebtToIncome * 100, type: 'positive' },
+                { name: 'Income Level', value: inputData.Income, impact: Math.max(0, (100000 - inputData.Income) / 1000), type: 'negative' },
+                { name: 'Employment Years', value: inputData.EmploymentYears, impact: Math.max(0, (15 - inputData.EmploymentYears) * 5), type: 'negative' },
+                { name: 'Loan Amount', value: inputData.LoanAmount, impact: (inputData.LoanAmount / inputData.Income) * 50, type: 'positive' }
+            ];
+            
+            // Sort by impact
+            features.sort((a, b) => b.impact - a.impact);
+            
+            container.innerHTML = features.map(feature => `
+                <div class="feature-bar">
+                    <div class="feature-name">${feature.name}</div>
+                    <div class="feature-bar-bg">
+                        <div class="feature-bar-fill ${feature.type}" 
+                             style="width: ${Math.min(feature.impact, 100)}%"></div>
+                    </div>
+                    <div class="feature-value">${feature.impact.toFixed(0)}%</div>
+                </div>
+            `).join('');
+        }
+
+        function updateComparisonStats(probability) {
+            // Simulate portfolio benchmarks
+            const portfolioAvg = '32.4%';
+            const industryBench = '28.7%';
+            
+            document.getElementById('portfolioAvg').textContent = portfolioAvg;
+            document.getElementById('industryBench').textContent = industryBench;
+        }
+        
+        function showError(message) {
+            const result = document.getElementById('result');
+            const resultHeader = document.getElementById('resultHeader');
+            
+            result.innerHTML = `
+                <div class="result-header high-risk">
+                    <div class="result-icon">❌</div>
+                    <div class="result-text">Error</div>
+                    <div class="result-probability">${message}</div>
+                </div>
+            `;
+            result.style.display = 'block';
+        }
+        
+        function fillLowRisk() {
+            document.getElementById('income').value = '85000';
+            document.getElementById('age').value = '35';
+            document.getElementById('loanAmount').value = '180000';
+            document.getElementById('creditScore').value = '780';
+            document.getElementById('debtToIncome').value = '0.22';
+            document.getElementById('employmentYears').value = '8';
+            document.getElementById('loanTerm').value = '30';
+        }
+        
+        function fillHighRisk() {
+            document.getElementById('income').value = '32000';
+            document.getElementById('age').value = '24';
+            document.getElementById('loanAmount').value = '280000';
+            document.getElementById('creditScore').value = '580';
+            document.getElementById('debtToIncome').value = '0.75';
+            document.getElementById('employmentYears').value = '2';
+            document.getElementById('loanTerm').value = '15';
+        }
+    </script>
+</body>
+</html>

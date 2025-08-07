@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5-Minute Model-to-Market Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .demo-title {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .demo-subtitle {
+            font-size: 1.8em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .company-name {
+            font-size: 1.2em;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .timer-container {
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .timer-circle {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: conic-gradient(#ff6b6b 0deg, #4ecdc4 120deg, #45b7d1 240deg, #ff6b6b 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: rotate 2s linear infinite;
+        }
+
+        .timer-inner {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .timer-display {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .timer-label {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .status-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            min-width: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .status-item.active {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .status-item.completed {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .status-light {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #666;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .status-light.active {
+            background: #ffd700;
+            box-shadow: 0 0 20px #ffd700;
+            animation: pulse 1s infinite;
+        }
+
+        .status-light.completed {
+            background: #4caf50;
+            box-shadow: 0 0 20px #4caf50;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .traffic-light {
+            position: fixed;
+            top: 50px;
+            right: 50px;
+            width: 60px;
+            background: #333;
+            border-radius: 30px;
+            padding: 10px;
+        }
+
+        .traffic-light-bulb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 10px 0;
+            background: #666;
+            transition: all 0.3s ease;
+        }
+
+        .traffic-light-bulb.red-on {
+            background: #ff4444;
+            box-shadow: 0 0 20px #ff4444;
+        }
+
+        .traffic-light-bulb.yellow-on {
+            background: #ffaa00;
+            box-shadow: 0 0 20px #ffaa00;
+        }
+
+        .traffic-light-bulb.green-on {
+            background: #44ff44;
+            box-shadow: 0 0 20px #44ff44;
+        }
+
+        .qr-section {
+            position: fixed;
+            bottom: 50px;
+            left: 50px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: white;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #333;
+            border-radius: 10px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn.primary {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+
+        @media (max-width: 768px) {
+            .demo-title { font-size: 2.5em; }
+            .demo-subtitle { font-size: 1.4em; }
+            .timer-circle { width: 250px; height: 250px; }
+            .timer-inner { width: 210px; height: 210px; }
+            .timer-display { font-size: 3em; }
+            .status-container { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1 class="demo-title">5-Minute Model-to-Market</h1>
+        <p class="demo-subtitle">SAS → Git → Container → Production</p>
+        <p class="company-name">Powered by Thakral One</p>
+    </div>
+
+    <div class="timer-container">
+        <div class="timer-circle">
+            <div class="timer-inner">
+                <div class="timer-display" id="timerDisplay">5:00</div>
+                <div class="timer-label">Minutes</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-container">
+        <div class="status-item" id="step1">
+            <div class="status-light"></div>
+            <div>SAS Model Export</div>
+        </div>
+        <div class="status-item" id="step2">
+            <div class="status-light"></div>
+            <div>Git Commit</div>
+        </div>
+        <div class="status-item" id="step3">
+            <div class="status-light"></div>
+            <div>Container Build</div>
+        </div>
+        <div class="status-item" id="step4">
+            <div class="status-light"></div>
+            <div>Testing</div>
+        </div>
+        <div class="status-item" id="step5">
+            <div class="status-light"></div>
+            <div>Production Deploy</div>
+        </div>
+        <div class="status-item" id="step6">
+            <div class="status-light"></div>
+            <div>API Ready</div>
+        </div>
+    </div>
+
+    <div class="traffic-light">
+        <div class="traffic-light-bulb" id="redLight"></div>
+        <div class="traffic-light-bulb" id="yellowLight"></div>
+        <div class="traffic-light-bulb" id="greenLight"></div>
+    </div>
+
+    <div class="qr-section">
+        <div class="qr-code" id="qrCode">
+            QR Code<br>
+            Will appear here<br>
+            when API is ready
+        </div>
+        <div>Scan to test live API</div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="resetDemo()">Reset</button>
+        <button class="btn" onclick="setApiUrl()">Set API URL</button>
+        <button class="btn primary" onclick="startDemo()">Start Demo</button>
+    </div>
+
+    <!-- API URL Input Modal -->
+    <div id="apiModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; text-align: center; min-width: 400px;">
+            <h3 style="color: #333; margin-bottom: 20px;">🚀 Set Live API Endpoint</h3>
+            <p style="color: #666; margin-bottom: 20px;">Enter your ngrok tunnel URL (e.g., https://abc123.ngrok.io)</p>
+            <input type="text" id="apiUrlInput" placeholder="https://your-ngrok-url.ngrok.io" 
+                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 20px;">
+            <div>
+                <button onclick="confirmApiUrl()" style="background: #4ecdc4; color: white; border: none; padding: 12px 24px; border-radius: 8px; margin-right: 10px; cursor: pointer;">✅ Confirm</button>
+                <button onclick="closeApiModal()" style="background: #ccc; color: #333; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">❌ Cancel</button>
+            </div>
+            <div id="apiStatus" style="margin-top: 15px; font-size: 14px;"></div>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 300; // 5 minutes in seconds
+        let timerInterval;
+        let demoRunning = false;
+        let currentStep = 0;
+        let apiEndpoint = null; // Will be set dynamically
+
+        const steps = [
+            { name: 'SAS Model Export', duration: 30 },
+            { name: 'Git Commit', duration: 15 },
+            { name: 'Container Build', duration: 90 },
+            { name: 'Testing', duration: 45 },
+            { name: 'Production Deploy', duration: 60 },
+            { name: 'API Ready', duration: 60 }
+        ];
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateTrafficLight(state) {
+            document.getElementById('redLight').className = 'traffic-light-bulb' + (state === 'red' ? ' red-on' : '');
+            document.getElementById('yellowLight').className = 'traffic-light-bulb' + (state === 'yellow' ? ' yellow-on' : '');
+            document.getElementById('greenLight').className = 'traffic-light-bulb' + (state === 'green' ? ' green-on' : '');
+        }
+
+        function updateStep(stepIndex, status) {
+            const stepElement = document.getElementById(`step${stepIndex + 1}`);
+            const lightElement = stepElement.querySelector('.status-light');
+            
+            stepElement.className = 'status-item';
+            lightElement.className = 'status-light';
+            
+            if (status === 'active') {
+                stepElement.classList.add('active');
+                lightElement.classList.add('active');
+            } else if (status === 'completed') {
+                stepElement.classList.add('completed');
+                lightElement.classList.add('completed');
+            }
+        }
+
+        function generateQR(text) {
+            // Generate actual QR code using QR Server API
+            const qrData = encodeURIComponent(JSON.stringify({
+                endpoint: text,
+                demo: "Thakral One SAS Demo",
+                test_data: {
+                    Income: 75000,
+                    Age: 35,
+                    LoanAmount: 200000,
+                    CreditScore: 750,
+                    DebtToIncome: 0.25,
+                    EmploymentYears: 8,
+                    LoanTerm: 30
+                }
+            }));
+            
+            document.getElementById('qrCode').innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${qrData}" 
+                     alt="QR Code" 
+                     style="width: 140px; height: 140px; border-radius: 5px;"
+                     onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\\'padding: 20px; font-size: 12px; text-align: center;\\'>API Ready!<br><br>Endpoint:<br>${text}<br><br>Status: Live</div>';">
+            `;
+        }
+
+        function startDemo() {
+            if (demoRunning) return;
+            
+            demoRunning = true;
+            currentStep = 0;
+            timeLeft = 300;
+            
+            updateTrafficLight('red');
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                
+                if (timeLeft <= 0) {
+                    finishDemo();
+                    return;
+                }
+                
+                // Progress through steps
+                let totalTime = 0;
+                let activeStep = -1;
+                
+                for (let i = 0; i < steps.length; i++) {
+                    totalTime += steps[i].duration;
+                    if (300 - timeLeft <= totalTime) {
+                        activeStep = i;
+                        break;
+                    }
+                }
+                
+                // Update step displays
+                for (let i = 0; i < steps.length; i++) {
+                    if (i < activeStep) {
+                        updateStep(i, 'completed');
+                    } else if (i === activeStep) {
+                        updateStep(i, 'active');
+                    } else {
+                        updateStep(i, 'inactive');
+                    }
+                }
+                
+                // Update traffic light based on progress
+                const progress = (300 - timeLeft) / 300;
+                if (progress < 0.3) {
+                    updateTrafficLight('red');
+                } else if (progress < 0.9) {
+                    updateTrafficLight('yellow');
+                } else {
+                    updateTrafficLight('green');
+                }
+                
+                // Generate QR code when API is ready
+                if (activeStep >= 5 && apiEndpoint) {
+                    generateQR(apiEndpoint);
+                }
+                
+            }, 1000);
+        }
+
+        function finishDemo() {
+            clearInterval(timerInterval);
+            demoRunning = false;
+            
+            // Mark all steps as completed
+            for (let i = 0; i < steps.length; i++) {
+                updateStep(i, 'completed');
+            }
+            
+            updateTrafficLight('green');
+            if (apiEndpoint) {
+                generateQR(apiEndpoint);
+            }
+            
+            // Celebration effect
+            document.body.style.animation = 'gradient 1s ease infinite';
+        }
+
+        function resetDemo() {
+            clearInterval(timerInterval);
+            demoRunning = false;
+            timeLeft = 300;
+            currentStep = 0;
+            
+            updateTimer();
+            updateTrafficLight('red');
+            
+            // Reset all steps
+            for (let i = 0; i < steps.length; i++) {
+                updateStep(i, 'inactive');
+            }
+            
+            document.getElementById('qrCode').innerHTML = `
+                <div style="padding: 30px; font-size: 14px; text-align: center; color: #666;">
+                    <div style="font-size: 18px; margin-bottom: 10px;">🚀</div>
+                    QR Code<br>
+                    Will appear here<br>
+                    when API is ready
+                </div>
+            `;
+        }
+
+        // API URL Management Functions
+        function setApiUrl() {
+            document.getElementById('apiModal').style.display = 'block';
+            document.getElementById('apiUrlInput').value = apiEndpoint || '';
+        }
+
+        function closeApiModal() {
+            document.getElementById('apiModal').style.display = 'none';
+        }
+
+        async function confirmApiUrl() {
+            const url = document.getElementById('apiUrlInput').value.trim();
+            const statusDiv = document.getElementById('apiStatus');
+            
+            if (!url) {
+                statusDiv.innerHTML = '<span style="color: red;">❌ Please enter a URL</span>';
+                return;
+            }
+            
+            // Validate URL format
+            try {
+                new URL(url);
+            } catch (e) {
+                statusDiv.innerHTML = '<span style="color: red;">❌ Invalid URL format</span>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<span style="color: blue;">🔄 Testing connection...</span>';
+            
+            // Test the API endpoint
+            try {
+                const response = await fetch(url + '/health', { 
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    apiEndpoint = url;
+                    statusDiv.innerHTML = '<span style="color: green;">✅ API endpoint confirmed!</span>';
+                    setTimeout(() => {
+                        closeApiModal();
+                    }, 1500);
+                } else {
+                    statusDiv.innerHTML = '<span style="color: orange;">⚠️ API not responding, but URL saved</span>';
+                    apiEndpoint = url;
+                    setTimeout(() => {
+                        closeApiModal();
+                    }, 2000);
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<span style="color: orange;">⚠️ Cannot test connection, but URL saved</span>';
+                apiEndpoint = url;
+                setTimeout(() => {
+                    closeApiModal();
+                }, 2000);
+            }
+        }
+
+        // Keyboard shortcut for setting API URL
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'u') {
+                event.preventDefault();
+                setApiUrl();
+            }
+        });
+
+        // Initialize
+        updateTimer();
+        updateTrafficLight('red');
+    </script>
+</body>
+</html>
